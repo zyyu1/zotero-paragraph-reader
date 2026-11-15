@@ -1,4 +1,48 @@
-# Paragraph Reader · 段落阅读
+# Paragraph Reader
+
+[English](#english) | [中文](#中文)
+
+## English
+
+Paragraph Reader is a personal Zotero plugin based on BiRead. The current version is **0.1.2**. It adds stacked bilingual paragraphs by default, click-to-translate and translation visibility toggles, adjustable reading width, and custom API endpoint, key, model, and connection settings inside the reader.
+
+**[Download v0.1.2](https://github.com/zyyu1/zotero-paragraph-reader/releases/tag/v0.1.2)** and select the `.xpi` file.
+
+In Zotero, open **Tools → Plugins**, use the gear menu to select **Install Plugin From File**, and choose the downloaded XPI. Open a PDF, click **段落阅读 (Paragraph Reader) → API 设置 (API Settings)**, and save your provider settings. You can then click a paragraph to translate it or choose full-document translation. The current translation workflow is English to Simplified Chinese; the reader interface is primarily in Chinese. See the [Chinese installation, API, and annotation guide](docs/PERSONAL_READER_ZH.md) for details.
+
+This version uses its own add-on ID, preference namespace, and cache directory. It extends [BiRead](https://github.com/WWeiyiWang/BiRead), which is based on windingwind's zotero-pdf-translate. The reference commit is `abace0025e513da77f55467583a719a8cb4005a9`. Upstream copyright notices and the AGPL-3.0-or-later license are retained.
+
+### Features
+
+- Paragraph reflow inside Zotero with stacked or side-by-side bilingual text and adjustable font size, line spacing, and reading width.
+- Click a paragraph to translate it, click again to hide the Chinese translation, and click once more to restore it without another API request.
+- Highlights and comments linked to the source PDF, with manual phrase binding when the translation cannot be matched reliably.
+- Custom Chat Completions-compatible API endpoint, key, and model, with a connection test.
+
+### Build
+
+Use Node.js 22+ and run these commands from `biread/`:
+
+```sh
+npm ci --ignore-scripts
+npm run typecheck
+npm run lint:check
+npm run test:personal
+npm run test:bilingual
+npm run build
+```
+
+The installation package is generated in `biread/build/`. Updates currently require manual installation.
+
+### Attribution and license
+
+This project retains the upstream AGPL-3.0-or-later license and copyright notices. See [LICENSE](LICENSE) and the archived [BiRead README](docs/development/BIREAD_REFERENCE_README.md).
+
+---
+
+## 中文
+
+### Paragraph Reader · 段落阅读
 
 这是基于 BiRead 的个人 Zotero 插件，当前版本 **0.1.2**。新增默认上下段落对照、点击段落翻译与译文显隐、阅读宽度设置，以及阅读器内的自定义 API 地址、密钥、模型和连接测试。
 
