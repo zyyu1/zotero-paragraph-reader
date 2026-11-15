@@ -211,6 +211,67 @@ try {
       }
       throw Error("Selection phrase missing " + phrase);
     };
+    const palette = (label) =>
+      ui.settings.querySelector(`select[aria-label="${label}"]`);
+    check(
+      palette("高亮颜色").value === "#ffd400",
+      "Highlight must default to yellow",
+    );
+    check(
+      palette("下划线颜色").value === "#000000",
+      "Underline must default to black",
+    );
+    check(
+      palette("标注颜色").value === "#808080",
+      "Comment must default to gray",
+    );
+    for (const label of ["高亮颜色", "下划线颜色", "标注颜色"]) {
+      const options = [...palette(label).options].map((option) => option.value);
+      check(
+        options.includes("#808080") && options.includes("#000000"),
+        "Gray/black missing from palette",
+      );
+    }
+    const originalCreate = controls.create;
+    const calls = [];
+    controls.create = async (...args) => calls.push(args);
+    const toolbarButton = (label) =>
+      [...ui.modeRow.querySelectorAll("button")].find(
+        (button) => button.textContent === label,
+      );
+    toolbarButton("高亮").click();
+    toolbarButton("划线").click();
+    select("source", "stable");
+    cell("source").dispatchEvent(
+      new MouseEvent("contextmenu", {
+        bubbles: true,
+        cancelable: true,
+        clientX: 100,
+        clientY: 100,
+      }),
+    );
+    const commentAction = [
+      ...document.querySelectorAll('[role="menuitem"]'),
+    ].find((button) => button.textContent === "批注");
+    check(commentAction, "Comment action missing");
+    commentAction.click();
+    check(
+      calls[0][0] === "#ffd400" &&
+        calls[1][0] === "#000000" &&
+        calls[2][0] === "#808080" &&
+        calls[2][3] === true,
+      "Actions must use independent defaults",
+    );
+    palette("高亮颜色").value = "#000000";
+    toolbarButton("高亮").click();
+    toolbarButton("划线").click();
+    check(
+      calls[3][0] === "#000000" &&
+        calls[4][0] === "#000000" &&
+        palette("标注颜色").value === "#808080",
+      "Custom color must not change other tool defaults",
+    );
+    controls.create = originalCreate;
     select("translation", "能量");
     const expected = block.translation.indexOf("能量");
     check(
@@ -236,11 +297,12 @@ try {
       ui.selection().start === expected && getSelection().toString() === "能量",
       "Image loading destroys selection",
     );
-    await controls.create("#5fb236", "underline");
+    await controls.create("#000000", "underline");
     const first = [...items.values()][0];
     check(
       first?.annotationText === "energy" &&
-        first.annotationType === "underline",
+        first.annotationType === "underline" &&
+        first.annotationColor === "#000000",
       "Chinese underline not written to PDF",
     );
     check(
@@ -293,6 +355,17 @@ try {
       cell("translation").querySelectorAll("mark").length === 2,
       "Reopened highlights missing",
     );
+    select("source", "formula");
+    await controls.create("#808080", "highlight", undefined, true);
+    check(
+      [...items.values()].some((item) => item.annotationColor === "#808080"),
+      "Gray comment mark not persisted",
+    );
+    check(
+      ui.inspector.querySelector('select[aria-label="Annotation colour"]')
+        .value === "#808080",
+      "Annotation editor must retain gray",
+    );
     controls.dispose();
     ui.dispose();
     return {
@@ -305,6 +378,8 @@ try {
         "PDF comparison mode",
         "reopen persistence",
         "reference preview and exact destination",
+        "independent yellow/black/gray defaults and palettes",
+        "black underline and gray comment persistence",
       ],
       canonicalAnnotations: items.size,
     };

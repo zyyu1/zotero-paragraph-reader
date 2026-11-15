@@ -2,7 +2,7 @@ import type { Block } from "../types";
 import type { BilingualView } from "./bilingualView";
 import type { PDFIntegration } from "../reader/pdfIntegration";
 import { AnnotationBridge } from "../annotations/zoteroAnnotationBridge";
-import { setPref } from "../../utils/prefs";
+import { getPref, setPref } from "../../utils/prefs";
 import {
   installLocalModel,
   ensureLocalModel,
@@ -14,6 +14,8 @@ const colors = [
   ["绿色", "#5fb236"],
   ["蓝色", "#2ea8e5"],
   ["紫色", "#a28ae5"],
+  ["灰色", "#808080"],
+  ["黑色", "#000000"],
 ];
 export class AnnotationControls {
   readonly bridge: AnnotationBridge;
@@ -82,8 +84,22 @@ export class AnnotationControls {
         this.selectedKey = undefined;
       }
     });
-    const color = this.colorSelect("#ffd400");
-    ui.settings.append(color);
+    const toolColor = (tool: string, label: string, fallback: string) => {
+      const pref = `bilingual.annotation.${tool}Color`;
+      const saved = String(getPref(pref) || fallback);
+      const select = this.colorSelect(
+        colors.some(([, color]) => color === saved) ? saved : fallback,
+        label,
+      );
+      select.onchange = () => setPref(pref, select.value);
+      const wrapper = ui.doc.createElement("label");
+      wrapper.append(ui.doc.createTextNode(label + " "), select);
+      ui.settings.append(wrapper);
+      return select;
+    };
+    const highlightColor = toolColor("highlight", "高亮颜色", "#ffd400");
+    const underlineColor = toolColor("underline", "下划线颜色", "#000000");
+    const commentColor = toolColor("comment", "标注颜色", "#808080");
     const installModel = ui.button("一键安装本地模型", async () => {
       installModel.disabled = true;
       try {
@@ -134,14 +150,14 @@ export class AnnotationControls {
     );
     const highlight = ui.button(
       "Highlight selection",
-      () => void this.create(color.value),
+      () => void this.create(highlightColor.value),
     );
     highlight.title =
       "中文选择优先匹配英文词语；无法唯一匹配时不会扩大到整句。匹配失败时中文标注保存在本机 Paragraph Reader。";
     highlight.onmousedown = (event) => event.preventDefault();
     const underline = ui.button(
       "Underline selection",
-      () => void this.create(color.value, "underline"),
+      () => void this.create(underlineColor.value, "underline"),
     );
     underline.onmousedown = (event) => event.preventDefault();
     this.contextHandler = (event) => {
@@ -195,7 +211,12 @@ export class AnnotationControls {
             ui.status.textContent = "文本已更新，请重新选中文字后标注。";
             return;
           }
-          void this.create(color.value, type, selection, comment);
+          const color = comment
+            ? commentColor.value
+            : type === "underline"
+              ? underlineColor.value
+              : highlightColor.value;
+          void this.create(color, type, selection, comment);
         };
         menu.append(button);
       }
@@ -279,9 +300,9 @@ export class AnnotationControls {
       this.hoverHandler,
     );
   }
-  private colorSelect(value: string) {
+  private colorSelect(value: string, label = "Annotation colour") {
     const select = this.ui.doc.createElement("select");
-    select.setAttribute("aria-label", "Annotation colour");
+    select.setAttribute("aria-label", label);
     for (const [name, color] of colors) {
       const option = this.ui.doc.createElement("option");
       option.value = color;

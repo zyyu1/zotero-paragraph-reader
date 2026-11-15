@@ -135,6 +135,26 @@ describe("Personal reader in isolated Zotero", function () {
         "Paragraph Reader integration test",
       );
       assert.isAbove(attachment.getAnnotations().length, 0);
+      for (const [type, color] of [
+        ["underline", "#000000"],
+        ["highlight", "#808080"],
+      ] as const) {
+        const coloredKey = await bridge.create(
+          block,
+          "source",
+          start,
+          start + "Soil samples".length,
+          color,
+          type,
+        );
+        const colored = bridge.details(coloredKey);
+        assert.isOk(colored);
+        assert.equal(
+          colored && colored.annotationColor,
+          color,
+          "Native Zotero preserves black/gray",
+        );
+      }
     } finally {
       bridge.dispose();
       reader.close();
