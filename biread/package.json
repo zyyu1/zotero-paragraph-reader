@@ -1,7 +1,7 @@
 {
   "name": "zotero-paragraph-reader",
-  "version": "0.1.7",
-  "description": "Paragraph reflow, bilingual translation and linked Zotero annotations",
+  "version": "0.1.8",
+  "description": "Connect custom APIs for PDF reflow, full-document translation, and paragraph translation in Zotero",
   "config": {
     "addonName": "Paragraph Reader · 段落阅读",
     "addonID": "paragraph-reader@yexun.local",

@@ -24,6 +24,7 @@ export type FluentMessageId =
   | 'itemmenu-translateTitle'
   | 'pin-window'
   | 'pref-about'
+  | 'pref-about-description'
   | 'pref-about-docs'
   | 'pref-about-feedback'
   | 'pref-about-version'

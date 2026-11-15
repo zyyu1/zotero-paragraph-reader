@@ -4,9 +4,9 @@
 
 ## English
 
-Paragraph Reader is a personal Zotero plugin based on BiRead. The current version is **0.1.7**. It adds stacked bilingual paragraphs by default, click-to-translate and translation visibility toggles, adjustable reading width, and custom API endpoint, key, model, and connection settings inside the reader.
+Paragraph Reader is a Zotero plugin that connects to custom APIs for PDF reflow reading, full-document translation, and paragraph translation. The current version is **0.1.8**. It also supports stacked bilingual text, translation visibility toggles, adjustable reading width, and linked annotations.
 
-**[Download v0.1.7](https://github.com/zyyu1/zotero-paragraph-reader/releases/tag/v0.1.7)** and select the `.xpi` file.
+**[Download v0.1.8](https://github.com/zyyu1/zotero-paragraph-reader/releases/tag/v0.1.8)** and select the `.xpi` file.
 
 In Zotero, open **Tools → Plugins**, use the gear menu to select **Install Plugin From File**, and choose the downloaded XPI. Open a PDF, click **段落阅读 (Paragraph Reader) → API 设置 (API Settings)**, and save your provider settings. You can then click a paragraph to translate it or choose full-document translation. The current translation workflow is English to Simplified Chinese; the reader interface is primarily in Chinese. See the [Chinese installation, API, and annotation guide](docs/PERSONAL_READER_ZH.md) for details.
 
@@ -58,9 +58,9 @@ This project retains the upstream AGPL-3.0-or-later license and copyright notice
 
 ### Paragraph Reader · 段落阅读
 
-这是基于 BiRead 的个人 Zotero 插件，当前版本 **0.1.7**。新增默认上下段落对照、点击段落翻译与译文显隐、阅读宽度设置，以及阅读器内的自定义 API 地址、密钥、模型和连接测试。
+Paragraph Reader 是一款通过连接自定义 API，在 Zotero 内实现 PDF 重排阅读、全文翻译和段落翻译的插件，当前版本 **0.1.8**。同时支持中英对照、译文显隐、阅读宽度调整和双语关联标注。
 
-**[下载 v0.1.7 安装包](https://github.com/zyyu1/zotero-paragraph-reader/releases/tag/v0.1.7)**（选择 `.xpi` 文件）。
+**[下载 v0.1.8 安装包](https://github.com/zyyu1/zotero-paragraph-reader/releases/tag/v0.1.8)**（选择 `.xpi` 文件）。
 
 请先阅读 [个人版安装、API 与标注使用说明](docs/PERSONAL_READER_ZH.md)。打开 PDF 后点击 **段落阅读 → API 设置**，保存配置后选择翻译单段或全文。
 
