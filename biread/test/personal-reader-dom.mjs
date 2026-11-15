@@ -116,13 +116,18 @@ try {
   const paragraph = page.locator('[data-block-id="p2"] .bi-source');
   const translation = page.locator('[data-block-id="p2"] .bi-translation');
   assert.equal(await translation.isVisible(), false);
+  await page.evaluate(() => {
+    ui.root.dataset.language = "source";
+  });
   // A double-click selecting text must not request a translation.
   await paragraph.dblclick();
   await page.waitForTimeout(400);
   assert.deepEqual(await page.evaluate(() => translated), []);
-  await page.evaluate(() => document.getSelection().removeAllRanges());
-  await paragraph.click();
-  await page.waitForFunction(() => translated.length === 1);
+  // Clicking outside the old selection must translate without manually clearing it.
+  await paragraph.click({ position: { x: 5, y: 10 } });
+  await page.waitForFunction(() => translated.length === 1, null, {
+    timeout: 3000,
+  });
   assert.deepEqual(await page.evaluate(() => translated), ["p2"]);
   assert.equal(await translation.isVisible(), true);
   await paragraph.click();
@@ -159,6 +164,25 @@ try {
   await page.keyboard.press("Enter");
   await translation.waitFor({ state: "visible" });
   assert.deepEqual(await page.evaluate(() => translated), ["p2"]);
+  // Source-only mode must reveal just the clicked paragraph, even with cached text.
+  await page.evaluate(() => {
+    ui.root.dataset.language = "source";
+  });
+  const cachedSource = page.locator('[data-block-id="p1"] .bi-source');
+  const cachedTranslation = page.locator(
+    '[data-block-id="p1"] .bi-translation',
+  );
+  assert.equal(await cachedTranslation.isVisible(), false);
+  await cachedSource.click();
+  await cachedTranslation.waitFor({ state: "visible" });
+  await cachedSource.click();
+  await cachedTranslation.waitFor({ state: "hidden" });
+  await cachedSource.click();
+  await cachedTranslation.waitFor({ state: "visible" });
+  assert.deepEqual(await page.evaluate(() => translated), ["p2"]);
+  await page.evaluate(() => {
+    ui.root.dataset.language = "both";
+  });
   await page.getByRole("button", { name: "API 设置", exact: true }).click();
   await page
     .getByRole("textbox", { name: "API 地址", exact: true })

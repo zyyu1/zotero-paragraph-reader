@@ -13,7 +13,8 @@ export function paragraphToggle(
   let pending = false;
   let disposed = false;
   let timer: ReturnType<typeof setTimeout> | undefined;
-  let down: { x: number; y: number; selection: boolean } | undefined;
+  let down: { x: number; y: number } | undefined;
+  let revealed = false;
   const doc = row.ownerDocument;
   const refresh = () => {
     const hidden =
@@ -27,9 +28,15 @@ export function paragraphToggle(
     }
   };
   const toggle = async () => {
-    if (disposed || !doc.getSelection()?.isCollapsed) return;
+    if (disposed || doc.getSelection()?.isCollapsed === false) return;
+    const firstSourceClick =
+      !revealed &&
+      row.closest("[data-language]")?.getAttribute("data-language") ===
+        "source";
+    revealed = true;
+    row.dataset.translationRevealed = "true";
     if (block.translation || pending) {
-      collapsed = !collapsed;
+      collapsed = firstSourceClick ? false : !collapsed;
       refresh();
       return;
     }
@@ -55,7 +62,6 @@ export function paragraphToggle(
     down = {
       x: event.clientX,
       y: event.clientY,
-      selection: !!doc.getSelection()?.toString(),
     };
   };
   const click = (event: MouseEvent) => {
@@ -68,8 +74,7 @@ export function paragraphToggle(
       event.metaKey ||
       event.shiftKey ||
       event.altKey ||
-      !doc.getSelection()?.isCollapsed ||
-      down?.selection ||
+      doc.getSelection()?.isCollapsed === false ||
       (down && Math.hypot(event.clientX - down.x, event.clientY - down.y) > 5)
     )
       return;

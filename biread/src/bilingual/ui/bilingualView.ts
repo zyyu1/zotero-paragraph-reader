@@ -243,6 +243,7 @@ export class BilingualView {
 
       #zpt-bilingual .bi-list { font-size:var(--reading-size,15px); line-height:var(--reading-line,1.8) }
       #zpt-bilingual[data-language=translation] .bi-source, #zpt-bilingual[data-language=source] .bi-translation { display:none }
+      #zpt-bilingual[data-language=source] .bi-row[data-translation-revealed=true] .bi-translation { display:block }
       #zpt-bilingual[data-language=translation] .bi-columns, #zpt-bilingual[data-language=source] .bi-columns { grid-template-columns:1fr }
       #zpt-bilingual[data-language=translation] .bi-translation { border-left:0 }
       #zpt-bilingual[data-language=translation] .bi-row, #zpt-bilingual[data-language=source] .bi-row { max-width:960px }

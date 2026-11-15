@@ -4,15 +4,17 @@
 
 ## English
 
-Paragraph Reader is a personal Zotero plugin based on BiRead. The current version is **0.1.6**. It adds stacked bilingual paragraphs by default, click-to-translate and translation visibility toggles, adjustable reading width, and custom API endpoint, key, model, and connection settings inside the reader.
+Paragraph Reader is a personal Zotero plugin based on BiRead. The current version is **0.1.7**. It adds stacked bilingual paragraphs by default, click-to-translate and translation visibility toggles, adjustable reading width, and custom API endpoint, key, model, and connection settings inside the reader.
 
-**[Download v0.1.6](https://github.com/zyyu1/zotero-paragraph-reader/releases/tag/v0.1.6)** and select the `.xpi` file.
+**[Download v0.1.7](https://github.com/zyyu1/zotero-paragraph-reader/releases/tag/v0.1.7)** and select the `.xpi` file.
 
 In Zotero, open **Tools → Plugins**, use the gear menu to select **Install Plugin From File**, and choose the downloaded XPI. Open a PDF, click **段落阅读 (Paragraph Reader) → API 设置 (API Settings)**, and save your provider settings. You can then click a paragraph to translate it or choose full-document translation. The current translation workflow is English to Simplified Chinese; the reader interface is primarily in Chinese. See the [Chinese installation, API, and annotation guide](docs/PERSONAL_READER_ZH.md) for details.
 
 This version uses its own add-on ID, preference namespace, and cache directory. It extends [BiRead](https://github.com/WWeiyiWang/BiRead), which is based on windingwind's zotero-pdf-translate. The reference commit is `abace0025e513da77f55467583a719a8cb4005a9`. Upstream copyright notices and the AGPL-3.0-or-later license are retained.
 
 ### Features
+
+- Fix paragraph clicks after text selection; clicking a paragraph in source-only mode reveals its Chinese translation.
 
 - Select text with the left mouse button to immediately open highlight, underline, and comment actions.
 
@@ -50,13 +52,15 @@ This project retains the upstream AGPL-3.0-or-later license and copyright notice
 
 ## 中文
 
+修复选中文字后段落点击被拦截的问题；“仅外文”模式下点击段落也会显示该段中文，再次点击可隐藏。
+
 左键选中文字并松开鼠标，即可直接选择高亮、下划线或批注，无需右键。
 
 ### Paragraph Reader · 段落阅读
 
-这是基于 BiRead 的个人 Zotero 插件，当前版本 **0.1.6**。新增默认上下段落对照、点击段落翻译与译文显隐、阅读宽度设置，以及阅读器内的自定义 API 地址、密钥、模型和连接测试。
+这是基于 BiRead 的个人 Zotero 插件，当前版本 **0.1.7**。新增默认上下段落对照、点击段落翻译与译文显隐、阅读宽度设置，以及阅读器内的自定义 API 地址、密钥、模型和连接测试。
 
-**[下载 v0.1.6 安装包](https://github.com/zyyu1/zotero-paragraph-reader/releases/tag/v0.1.6)**（选择 `.xpi` 文件）。
+**[下载 v0.1.7 安装包](https://github.com/zyyu1/zotero-paragraph-reader/releases/tag/v0.1.7)**（选择 `.xpi` 文件）。
 
 请先阅读 [个人版安装、API 与标注使用说明](docs/PERSONAL_READER_ZH.md)。打开 PDF 后点击 **段落阅读 → API 设置**，保存配置后选择翻译单段或全文。
 

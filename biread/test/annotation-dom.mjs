@@ -451,6 +451,32 @@ try {
         "Delete must remove both language highlights",
       );
     }
+    // Exercise the real selection menu and paragraph toggle together.
+    select("source", "stable");
+    cell("source").dispatchEvent(
+      new MouseEvent("mouseup", { bubbles: true, button: 0 }),
+    );
+    check(popup(), "Selection menu must open before clicking the paragraph");
+    const wasHidden = cell("translation").classList.contains(
+      "pr-translation-hidden",
+    );
+    cell("source").dispatchEvent(
+      new PointerEvent("pointerdown", { bubbles: true, button: 0 }),
+    );
+    getSelection().removeAllRanges();
+    cell("source").dispatchEvent(
+      new MouseEvent("mouseup", { bubbles: true, button: 0 }),
+    );
+    cell("source").dispatchEvent(
+      new MouseEvent("click", { bubbles: true, button: 0, detail: 1 }),
+    );
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    check(!popup(), "Ordinary click must dismiss the selection menu");
+    check(
+      cell("translation").classList.contains("pr-translation-hidden") !==
+        wasHidden,
+      "Paragraph click after selection must still toggle translation",
+    );
     controls.dispose();
     ui.dispose();
     return {
