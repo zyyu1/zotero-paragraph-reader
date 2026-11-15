@@ -54,36 +54,63 @@ This project retains the upstream AGPL-3.0-or-later license and copyright notice
 
 ## 中文
 
-修复选中文字后段落点击被拦截的问题；“仅外文”模式下点击段落也会显示该段中文，再次点击可隐藏。
+Zotero Reflow Translator 是一款 Zotero PDF 重排翻译插件。它通过连接自定义 API，在 Zotero 内提供 PDF 重排阅读、全文翻译和段落翻译。
 
-左键选中文字并松开鼠标，即可直接选择高亮、下划线或批注，无需右键。
+当前版本：**v0.1.10**
 
-### Zotero Reflow Translator · PDF 重排翻译
+**[下载 ZoteroReflowTranslator-0.1.10.xpi](https://github.com/zyyu1/zotero-reflow-translator/releases/download/v0.1.10/ZoteroReflowTranslator-0.1.10.xpi)**
 
-Zotero Reflow Translator 是一款通过连接自定义 API，在 Zotero 内实现 PDF 重排阅读、全文翻译和段落翻译的插件，当前版本 **0.1.10**。同时支持中英对照、译文显隐、阅读宽度调整和双语关联标注。
+### 主要功能
 
-**[下载 v0.1.10 安装包](https://github.com/zyyu1/zotero-reflow-translator/releases/tag/v0.1.10)**（选择 `.xpi` 文件）。
+#### PDF 重排与翻译
 
-请先阅读 [个人版安装、API 与标注使用说明](docs/PERSONAL_READER_ZH.md)。打开 PDF 后点击 **段落阅读 → API 设置**，保存配置后选择翻译单段或全文。
+- 在 Zotero 内按段落重新排列 PDF 正文。
+- 支持上下对照和左右对照布局。
+- 支持全文翻译，也可以点击单个段落进行翻译。
+- 点击已翻译段落可隐藏中文，再次点击可恢复，不会重复调用 API。
+- 支持字号、行距和阅读宽度调整。
 
-本版本采用独立 ID、配置前缀和缓存目录。基于 [BiRead](https://github.com/WWeiyiWang/BiRead) 扩展，其上游为 windingwind 的 zotero-pdf-translate。参考提交：`abace0025e513da77f55467583a719a8cb4005a9`。保留原项目版权和 AGPL-3.0-or-later 许可证。
+#### 自定义 API
 
-## 功能
+- 自定义 API 地址、密钥和模型名称。
+- 兼容 Chat Completions 格式的翻译服务。
+- 提供连接测试，保存配置后即可翻译。
+- 译文保存在本地缓存中，重新打开文献时优先读取缓存。
 
-- 使用独立的 PDF 重排阅读视图，不再向 Zotero 右侧信息栏添加重复的翻译面板，避免与 Translate for Zotero 冲突。
+#### 高亮、下划线与批注
 
-- 删除确认弹窗支持“以后删除标注不再询问”；勾选并确认后永久记住，可在阅读设置中恢复删除确认。
+- 左键选中文字并松开鼠标，直接显示“高亮、下划线、批注”菜单。
+- 高亮默认黄色，下划线默认黑色，批注默认灰色。
+- 左键点击已有标记，可直接删除或编辑批注。
+- 支持将双语标注关联至原 PDF；无法可靠匹配时可手动重新绑定词组。
+- 删除确认支持“以后不再询问”，并可在阅读设置中恢复。
 
-- 左键点击已有高亮、下划线或批注标记，即可在旁边弹出“删除”和“编辑批注”。
+#### 插件兼容
 
-- 增加灰色和黑色；高亮默认黄色，下划线默认黑色，标注（批注）默认灰色，各自独立记忆选择。
+- 使用独立的 PDF 重排阅读视图。
+- 不在 Zotero 右侧信息栏添加重复翻译面板，避免与 Translate for Zotero 冲突。
 
-- Zotero 内上下／左右段落重排阅读，支持字号、行距及阅读宽度调整。
-- 点击段落翻译整段，再点隐藏中文，再点恢复已有译文，不重复调用 API。
-- 高亮和批注关联原 PDF；译文匹配不确定时可手动绑定。
-- 自定义 Chat Completions 兼容 API 地址、密钥与模型，支持连接测试。
+### 安装
 
-## 构建
+1. 下载上方 `.xpi` 安装包。
+2. 在 Zotero 中打开 **工具 → 插件**。
+3. 点击右上角齿轮，选择 **从文件安装插件**。
+4. 选择下载的安装包，然后完全退出并重新启动 Zotero。
+
+从旧版本覆盖安装时，插件 ID、API 设置、偏好配置和翻译缓存都会保留。
+
+### 快速使用
+
+1. 在 Zotero 中打开一篇 PDF。
+2. 打开 **PDF 重排翻译 → API 设置**。
+3. 填写 API 地址、密钥和模型，然后测试并保存。
+4. 进入重排阅读视图，点击段落翻译单段，或选择全文翻译。
+
+翻译会消耗所配置服务的 API 额度。已有缓存的译文、译文显隐、高亮、下划线和批注不会重复消耗翻译 API。
+
+更完整的配置与标注说明请参阅[中文使用说明](docs/PERSONAL_READER_ZH.md)。
+
+### 开发与构建
 
 在 `biread/` 目录使用 Node.js 22+：
 
@@ -98,6 +125,8 @@ npm run build
 
 安装包生成于 `biread/build/`。版本更新目前采用手动安装。
 
-## 来源和许可证
+### 来源与许可证
 
-保留上游的 AGPL-3.0-or-later 许可证与版权声明，见 [LICENSE](LICENSE)。参考项目原说明见 [BiRead README](docs/development/BIREAD_REFERENCE_README.md)。
+本项目基于 [BiRead](https://github.com/WWeiyiWang/BiRead) 扩展，其上游为 windingwind 的 zotero-pdf-translate。参考提交为 `abace0025e513da77f55467583a719a8cb4005a9`。
+
+项目保留上游版权声明并采用 AGPL-3.0-or-later 许可证，详见 [LICENSE](LICENSE)。参考项目原说明见 [BiRead README](docs/development/BIREAD_REFERENCE_README.md)。
