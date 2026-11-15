@@ -126,7 +126,7 @@ pref-advanced-reset-abstractTranslation =
     .label = 摘要翻译
 
 pref-about = 关于
-pref-about-description = Paragraph Reader 通过连接自定义 API，在 Zotero 内实现 PDF 重排阅读、全文翻译和段落翻译。
+pref-about-description = Zotero Reflow Translator 通过连接自定义 API，在 Zotero 内实现 PDF 重排阅读、全文翻译和段落翻译。
 
 pref-about-feedback =
     .value = GitHub

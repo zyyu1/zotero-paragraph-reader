@@ -1,4 +1,4 @@
-/** Quiet paper palette shared with the Paragraph Reader book mark. */
+/** Quiet paper palette shared with the Zotero Reflow Translator book mark. */
 export const readerTheme = `
 #zpt-bilingual { background:#ffffff; color:#3b3b3b; }
 #zpt-bilingual .bi-controls { background:#ffffff; border-bottom:1px solid #e5e5e5; padding:12px 22px 9px; gap:9px; flex-shrink:0; }

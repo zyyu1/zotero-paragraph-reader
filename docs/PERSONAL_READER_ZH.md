@@ -1,11 +1,11 @@
-# Paragraph Reader 0.1.8 使用说明
+# Zotero Reflow Translator 0.1.9 使用说明
 
 个人 Zotero 插件，基于 BiRead 扩展。提供 Zotero 内的段落重排阅读、自定义翻译 API，以及与原 PDF 关联的高亮和批注。当前翻译流程为英文 → 简体中文。
 
 ## 安装与使用
 
 1. Zotero → 工具 → 插件 → 齿轮菜单 → 从文件安装插件。
-2. 选择 `biread/build/ParagraphReader-0.1.8.xpi`。
+2. 选择 `biread/build/ZoteroReflowTranslator-0.1.9.xpi`。
 3. 打开包含可选文字的 PDF，点击阅读器工具栏的 **段落阅读**。
 4. 首次打开仅解析、重排和恢复本机译文缓存，不自动翻译全文。
 5. 点击 **API 设置**，填写地址、密钥、模型，点击 **测试连接**，然后 **保存并使用**。
@@ -81,7 +81,7 @@ node scripts/test-personal-zotero.mjs <zotero.exe 的绝对路径>
 - BiRead 的上游是 windingwind 的 zotero-pdf-translate。
 - 插件 ID：`paragraph-reader@yexun.local`；偏好前缀：`extensions.zotero.ParagraphReader`。
 - 缓存目录：Zotero 数据目录下的 `paragraph-reader-v1/`。
-- 个人版本仓库：https://github.com/zyyu1/zotero-paragraph-reader 。安装包见该仓库 Releases。
+- 项目仓库：https://github.com/zyyu1/zotero-reflow-translator 。安装包见该仓库 Releases。
 - 安装清单使用保留的 `.invalid` 更新域名满足 Zotero 校验；关闭后台更新，只手动安装新版本。
 - 保留上游版权和 **AGPL-3.0-or-later** 许可证，见根目录 `LICENSE`。
 

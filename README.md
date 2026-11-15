@@ -1,14 +1,14 @@
-# Paragraph Reader
+# Zotero Reflow Translator
 
 [English](#english) | [中文](#中文)
 
 ## English
 
-Paragraph Reader is a Zotero plugin that connects to custom APIs for PDF reflow reading, full-document translation, and paragraph translation. The current version is **0.1.8**. It also supports stacked bilingual text, translation visibility toggles, adjustable reading width, and linked annotations.
+Zotero Reflow Translator connects to custom APIs for PDF reflow reading, full-document translation, and paragraph translation. The current version is **0.1.9**. It also supports stacked bilingual text, translation visibility toggles, adjustable reading width, and linked annotations.
 
-**[Download v0.1.8](https://github.com/zyyu1/zotero-paragraph-reader/releases/tag/v0.1.8)** and select the `.xpi` file.
+**[Download v0.1.9](https://github.com/zyyu1/zotero-reflow-translator/releases/tag/v0.1.9)** and select the `.xpi` file.
 
-In Zotero, open **Tools → Plugins**, use the gear menu to select **Install Plugin From File**, and choose the downloaded XPI. Open a PDF, click **段落阅读 (Paragraph Reader) → API 设置 (API Settings)**, and save your provider settings. You can then click a paragraph to translate it or choose full-document translation. The current translation workflow is English to Simplified Chinese; the reader interface is primarily in Chinese. See the [Chinese installation, API, and annotation guide](docs/PERSONAL_READER_ZH.md) for details.
+In Zotero, open **Tools → Plugins**, use the gear menu to select **Install Plugin From File**, and choose the downloaded XPI. Open a PDF, click **PDF 重排翻译 (Zotero Reflow Translator) → API 设置 (API Settings)**, and save your provider settings. You can then click a paragraph to translate it or choose full-document translation. The current translation workflow is English to Simplified Chinese; the reader interface is primarily in Chinese. See the [Chinese installation, API, and annotation guide](docs/PERSONAL_READER_ZH.md) for details.
 
 This version uses its own add-on ID, preference namespace, and cache directory. It extends [BiRead](https://github.com/WWeiyiWang/BiRead), which is based on windingwind's zotero-pdf-translate. The reference commit is `abace0025e513da77f55467583a719a8cb4005a9`. Upstream copyright notices and the AGPL-3.0-or-later license are retained.
 
@@ -56,11 +56,11 @@ This project retains the upstream AGPL-3.0-or-later license and copyright notice
 
 左键选中文字并松开鼠标，即可直接选择高亮、下划线或批注，无需右键。
 
-### Paragraph Reader · 段落阅读
+### Zotero Reflow Translator · PDF 重排翻译
 
-Paragraph Reader 是一款通过连接自定义 API，在 Zotero 内实现 PDF 重排阅读、全文翻译和段落翻译的插件，当前版本 **0.1.8**。同时支持中英对照、译文显隐、阅读宽度调整和双语关联标注。
+Zotero Reflow Translator 是一款通过连接自定义 API，在 Zotero 内实现 PDF 重排阅读、全文翻译和段落翻译的插件，当前版本 **0.1.9**。同时支持中英对照、译文显隐、阅读宽度调整和双语关联标注。
 
-**[下载 v0.1.8 安装包](https://github.com/zyyu1/zotero-paragraph-reader/releases/tag/v0.1.8)**（选择 `.xpi` 文件）。
+**[下载 v0.1.9 安装包](https://github.com/zyyu1/zotero-reflow-translator/releases/tag/v0.1.9)**（选择 `.xpi` 文件）。
 
 请先阅读 [个人版安装、API 与标注使用说明](docs/PERSONAL_READER_ZH.md)。打开 PDF 后点击 **段落阅读 → API 设置**，保存配置后选择翻译单段或全文。
 

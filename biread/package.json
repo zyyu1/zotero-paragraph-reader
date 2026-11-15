@@ -1,9 +1,9 @@
 {
-  "name": "zotero-paragraph-reader",
-  "version": "0.1.8",
+  "name": "zotero-reflow-translator",
+  "version": "0.1.9",
   "description": "Connect custom APIs for PDF reflow, full-document translation, and paragraph translation in Zotero",
   "config": {
-    "addonName": "Paragraph Reader · 段落阅读",
+    "addonName": "Zotero Reflow Translator · PDF 重排翻译",
     "addonID": "paragraph-reader@yexun.local",
     "addonRef": "paragraphreader",
     "prefsPrefix": "extensions.zotero.ParagraphReader",
@@ -13,7 +13,7 @@
   "private": true,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zyyu1/zotero-paragraph-reader.git",
+    "url": "git+https://github.com/zyyu1/zotero-reflow-translator.git",
     "directory": "biread"
   },
   "scripts": {
@@ -30,7 +30,7 @@
   },
   "author": "Personal fork; based on BiRead by WWeiyiWang and zotero-pdf-translate by windingwind and contributors",
   "license": "AGPL-3.0-or-later",
-  "homepage": "https://github.com/zyyu1/zotero-paragraph-reader#readme",
+  "homepage": "https://github.com/zyyu1/zotero-reflow-translator#readme",
   "dependencies": {
     "franc": "^6.2.0",
     "iso639-js": "^1.1.3",

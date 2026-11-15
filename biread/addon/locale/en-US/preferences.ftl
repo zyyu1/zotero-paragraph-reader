@@ -126,7 +126,7 @@ pref-advanced-reset-abstractTranslation =
     .label = Abstract Translation
 
 pref-about = About
-pref-about-description = Paragraph Reader connects to custom APIs to provide PDF reflow reading, full-document translation, and paragraph translation in Zotero.
+pref-about-description = Zotero Reflow Translator connects to custom APIs to provide PDF reflow reading, full-document translation, and paragraph translation in Zotero.
 
 pref-about-feedback =
     .value = GitHub

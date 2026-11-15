@@ -315,7 +315,7 @@ export class BilingualView {
         lines.setAttribute("transform", "translate(512 0) scale(-1 1)");
       logo.append(lines);
     }
-    title.append(logo, doc.createTextNode("Paragraph Reader"));
+    title.append(logo, doc.createTextNode("Zotero Reflow Translator"));
     this.primary.append(title, pdfButton);
     this.primary.append(
       this.button("论文导读", () => {
@@ -356,11 +356,11 @@ export class BilingualView {
           const picker = new FilePicker();
           picker.init(
             Zotero.getMainWindow(),
-            "导出 Paragraph Reader 离线阅读文件",
+            "导出 Zotero Reflow Translator 离线阅读文件",
             picker.modeSave,
           );
-          picker.appendFilter("Paragraph Reader 阅读文件", "*.html");
-          picker.defaultString = "Paragraph Reader-paper.html";
+          picker.appendFilter("Zotero Reflow Translator 阅读文件", "*.html");
+          picker.defaultString = "Zotero-Reflow-Translator-paper.html";
           const result = await picker.show();
           if (result !== picker.returnOK && result !== picker.returnReplace)
             return;
