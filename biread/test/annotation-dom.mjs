@@ -58,6 +58,7 @@ try {
       makeDirectory: async () => {},
     };
     window.Components = { utils: { cloneInto: (v) => v } };
+    window.confirm = () => true;
     const integration = {
       identity: "annotation-dom",
       item: {
@@ -107,6 +108,9 @@ try {
             isAnnotation: () => true,
             isEditable: () => true,
             saveTx: async () => {},
+            eraseTx: async () => {
+              items.delete(a.key);
+            },
           };
           items.set(a.key, item);
           return item;
@@ -366,6 +370,54 @@ try {
         .value === "#808080",
       "Annotation editor must retain gray",
     );
+    getSelection().removeAllRanges();
+    const keys = [...items.keys()];
+    for (const key of keys) {
+      const mark = [...cell("source").querySelectorAll("mark")].find((m) =>
+        m.dataset.keys.split(" ").includes(key),
+      );
+      const before = items.size;
+      mark.click();
+      let popup = document.querySelector(
+        '[role="menu"][aria-label="标注操作"]',
+      );
+      check(
+        popup &&
+          [...popup.querySelectorAll("button")].some(
+            (b) => b.textContent === "删除",
+          ),
+        "Left click must show Delete immediately",
+      );
+      check(
+        items.size === before,
+        "Opening the popup must not delete anything",
+      );
+      popup.dispatchEvent(
+        new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+      );
+      check(
+        !document.querySelector('[aria-label="标注操作"]') &&
+          items.size === before,
+        "Escape must dismiss without deleting",
+      );
+      mark.click();
+      popup = document.querySelector('[aria-label="标注操作"]');
+      [...popup.querySelectorAll("button")]
+        .find((b) => b.textContent === "删除")
+        .click();
+      for (let n = 0; n < 100 && controls.busy; n++)
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      check(
+        !items.has(key) && !painted.has(key),
+        "Delete must remove the native PDF annotation",
+      );
+      check(
+        ![...ui.root.querySelectorAll("mark")].some((m) =>
+          m.dataset.keys.split(" ").includes(key),
+        ),
+        "Delete must remove both language highlights",
+      );
+    }
     controls.dispose();
     ui.dispose();
     return {
@@ -380,6 +432,8 @@ try {
         "reference preview and exact destination",
         "independent yellow/black/gray defaults and palettes",
         "black underline and gray comment persistence",
+        "left-click delete popup for highlights, underlines and comments",
+        "Escape dismisses without deleting; deletion updates native PDF and both languages",
       ],
       canonicalAnnotations: items.size,
     };

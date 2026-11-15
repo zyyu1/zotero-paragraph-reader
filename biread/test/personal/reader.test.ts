@@ -155,6 +155,21 @@ describe("Personal reader in isolated Zotero", function () {
           "Native Zotero preserves black/gray",
         );
       }
+      let mark: HTMLElement | null = null;
+      for (let n = 0; n < 100; n++) {
+        mark = frame!.contentDocument!.querySelector("mark[data-keys]");
+        if (mark) break;
+        await Zotero.Promise.delay(100);
+      }
+      assert.isOk(mark, "Native annotation is visible in reflow");
+      frame!.contentDocument!.getSelection()?.removeAllRanges();
+      mark!.click();
+      const popup = frame!.contentDocument!.querySelector(
+        '[aria-label="标注操作"]',
+      );
+      assert.isOk(popup, "Left click opens annotation actions immediately");
+      assert.include(popup!.textContent!, "删除");
+      assert.include(popup!.textContent!, "编辑批注");
     } finally {
       bridge.dispose();
       reader.close();

@@ -280,8 +280,9 @@ export class AnnotationControls {
     ui.doc.addEventListener("pointerdown", this.dismissMenu, true);
     ui.doc.addEventListener("scroll", this.closeMenu, true);
     ui.doc.defaultView?.addEventListener("blur", this.closeMenu);
-    ui.onAnnotation = (key) => {
-      if (!this.bindingSelection && !this.busy) void this.inspect(key);
+    ui.onAnnotation = (key, anchor) => {
+      if (!this.bindingSelection && !this.busy)
+        this.showAnnotationMenu(key, anchor);
     };
     ui.onHover = (key) => ui.emphasize(key);
     this.hoverHandler = (event) => {
@@ -299,6 +300,90 @@ export class AnnotationControls {
       "pointerout",
       this.hoverHandler,
     );
+  }
+  private showAnnotationMenu(key: string, anchor?: HTMLElement) {
+    this.closeMenu();
+    if (!this.bridge.details(key)) return;
+    const doc = this.ui.doc;
+    const menu = doc.createElement("div");
+    this.menu = menu;
+    menu.setAttribute("role", "menu");
+    menu.setAttribute("aria-label", "标注操作");
+    menu.style.cssText =
+      "position:fixed;z-index:2147483647;display:flex;gap:6px;padding:6px;border:1px solid #aaa;border-radius:6px;background:Canvas;color:CanvasText;box-shadow:0 3px 14px #0003;max-width:calc(100vw - 8px)";
+    const remove = doc.createElement("button");
+    remove.type = "button";
+    remove.textContent = "删除";
+    remove.setAttribute("role", "menuitem");
+    remove.style.cssText =
+      "padding:6px 12px;border:1px solid #aaa;border-radius:4px;background:Canvas;color:#b42318;cursor:pointer";
+    remove.onclick = async () => {
+      if (this.busy) return;
+      this.busy = true;
+      remove.disabled = edit.disabled = true;
+      const selected = this.selectedKey === key;
+      try {
+        await this.flushComment();
+        await this.bridge.remove(key);
+        if (this.bridge.details(key)) {
+          this.ui.status.textContent = "已取消删除。";
+          return;
+        }
+        if (selected) {
+          this.flushComment = async () => {};
+          this.commentDirty = () => false;
+          this.selectedKey = undefined;
+          this.bindingSelection = undefined;
+          this.ui.inspector.replaceChildren();
+        }
+        this.closeMenu();
+        this.ui.status.textContent =
+          this.bridge.nativeSyncError || "标注已删除。";
+      } catch (error) {
+        this.ui.status.textContent = `删除失败：${String(error)}`;
+      } finally {
+        this.busy = false;
+        remove.disabled = edit.disabled = false;
+      }
+    };
+    const edit = doc.createElement("button");
+    edit.type = "button";
+    edit.textContent = "编辑批注";
+    edit.setAttribute("role", "menuitem");
+    edit.style.cssText =
+      "padding:6px 12px;border:1px solid #aaa;border-radius:4px;background:Canvas;color:CanvasText;cursor:pointer";
+    edit.onclick = () => {
+      this.closeMenu();
+      void this.inspect(key);
+    };
+    menu.append(remove, edit);
+    menu.onkeydown = (event) => {
+      if (event.key === "Escape" || event.key === "Tab") {
+        this.closeMenu();
+        if (event.key === "Escape") {
+          event.preventDefault();
+          anchor?.focus({ preventScroll: true });
+        }
+      } else if (
+        ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)
+      ) {
+        event.preventDefault();
+        (doc.activeElement === remove ? edit : remove).focus();
+      }
+    };
+    doc.body.append(menu);
+    const rect =
+      anchor?.getBoundingClientRect() || this.ui.root.getBoundingClientRect();
+    const popup = menu.getBoundingClientRect();
+    const width = doc.defaultView?.innerWidth || this.ui.root.clientWidth;
+    const height = doc.defaultView?.innerHeight || this.ui.root.clientHeight;
+    menu.style.left = `${Math.max(4, Math.min(rect.left, width - popup.width - 4))}px`;
+    const top =
+      rect.bottom + 5 + popup.height <= height
+        ? rect.bottom + 5
+        : rect.top - popup.height - 5;
+    menu.style.top = `${Math.max(4, Math.min(top, height - popup.height - 4))}px`;
+    remove.focus({ preventScroll: true });
   }
   private colorSelect(value: string, label = "Annotation colour") {
     const select = this.ui.doc.createElement("select");

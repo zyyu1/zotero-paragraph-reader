@@ -171,7 +171,7 @@ export class BilingualView {
   }
   onReadingMode = (_mode: string) => {};
   onVisibleBlock = (_id: string) => {};
-  onAnnotation = (_key: string) => {};
+  onAnnotation = (_key: string, _anchor?: HTMLElement) => {};
   onHover = (_key?: string) => {};
   constructor(
     readonly doc: Document,

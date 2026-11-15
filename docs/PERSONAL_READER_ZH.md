@@ -1,11 +1,11 @@
-# Paragraph Reader 0.1.3 使用说明
+# Paragraph Reader 0.1.4 使用说明
 
 个人 Zotero 插件，基于 BiRead 扩展。提供 Zotero 内的段落重排阅读、自定义翻译 API，以及与原 PDF 关联的高亮和批注。当前翻译流程为英文 → 简体中文。
 
 ## 安装与使用
 
 1. Zotero → 工具 → 插件 → 齿轮菜单 → 从文件安装插件。
-2. 选择 `biread/build/ParagraphReader-0.1.3.xpi`。
+2. 选择 `biread/build/ParagraphReader-0.1.4.xpi`。
 3. 打开包含可选文字的 PDF，点击阅读器工具栏的 **段落阅读**。
 4. 首次打开仅解析、重排和恢复本机译文缓存，不自动翻译全文。
 5. 点击 **API 设置**，填写地址、密钥、模型，点击 **测试连接**，然后 **保存并使用**。
@@ -25,6 +25,8 @@
 - 密钥沿用上游的本机 Zotero 偏好设置存储方式，界面以密码框显示，没有额外加密层。分享调试文件前请检查内容。
 
 ## 高亮与批注
+
+- 左键点击已有标记，会在旁边弹出“删除”和“编辑批注”。按 Esc、点击空白或滚动可关闭菜单。删除仍沿用确认对话框；确认后同步移除原 PDF 与双语视图中的对应标记。
 
 - 颜色菜单包含灰色和黑色。高亮默认黄色，下划线默认黑色，标注（批注）默认灰色；三种操作各自保存颜色设置。
 
@@ -75,7 +77,7 @@ node scripts/test-personal-zotero.mjs <zotero.exe 的绝对路径>
 
 ## 来源与独立身份
 
-- 基础版本：BiRead `0.1.38-beta.5`，提交 `abace0025e513da77f55467583a719a8cb4005a9`。
+- 基础版本：BiRead `0.1.48-beta.5`，提交 `abace0025e513da77f55467583a719a8cb4005a9`。
 - BiRead 的上游是 windingwind 的 zotero-pdf-translate。
 - 插件 ID：`paragraph-reader@yexun.local`；偏好前缀：`extensions.zotero.ParagraphReader`。
 - 缓存目录：Zotero 数据目录下的 `paragraph-reader-v1/`。

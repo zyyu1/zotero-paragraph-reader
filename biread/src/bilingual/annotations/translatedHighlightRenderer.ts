@@ -14,7 +14,7 @@ export function renderHighlights(
   text: string,
   mappings: LinkedAnnotation[],
   side: "source" | "translation",
-  click: (key: string) => void,
+  click: (key: string, anchor?: HTMLElement) => void,
   hover: (key?: string) => void,
 ) {
   const doc = container.ownerDocument;
@@ -84,10 +84,17 @@ export function renderHighlights(
       .map((m) => m.comment || "打开标注 / Open annotation")
       .join("\n");
     mark.tabIndex = 0;
-    mark.onclick = () => click(active[active.length - 1].zoteroAnnotationKey);
+    mark.onclick = (event) => {
+      event.stopPropagation();
+      if (doc.getSelection()?.isCollapsed === false) return;
+      click(active[active.length - 1].zoteroAnnotationKey, mark);
+    };
     mark.onkeydown = (event) => {
-      if (event.key === "Enter")
-        click(active[active.length - 1].zoteroAnnotationKey);
+      if (event.key === "Enter") {
+        event.preventDefault();
+        event.stopPropagation();
+        click(active[active.length - 1].zoteroAnnotationKey, mark);
+      }
     };
     mark.onmouseenter = () =>
       hover(active[active.length - 1].zoteroAnnotationKey);
@@ -104,7 +111,7 @@ export function renderHighlights(
         menu.append(option);
       }
       menu.onchange = () => {
-        click(menu.value);
+        click(menu.value, mark);
         menu.remove();
       };
       menu.onblur = () => menu.remove();
