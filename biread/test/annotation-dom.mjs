@@ -248,7 +248,7 @@ try {
     toolbarButton("划线").click();
     select("source", "stable");
     cell("source").dispatchEvent(
-      new MouseEvent("contextmenu", {
+      new MouseEvent("mouseup", {
         bubbles: true,
         cancelable: true,
         clientX: 100,
@@ -258,7 +258,15 @@ try {
     const commentAction = [
       ...document.querySelectorAll('[role="menuitem"]'),
     ].find((button) => button.textContent === "批注");
-    check(commentAction, "Comment action missing");
+    check(commentAction, "Left selection must open annotation actions");
+    check(
+      getSelection().toString() === "stable",
+      "Popup must preserve selection",
+    );
+    check(
+      document.activeElement !== commentAction,
+      "Mouse popup must not steal focus",
+    );
     commentAction.click();
     check(
       calls[0][0] === "#ffd400" &&
@@ -276,6 +284,30 @@ try {
         palette("标注颜色").value === "#808080",
       "Custom color must not change other tool defaults",
     );
+    const popup = () =>
+      document.querySelector('[role="menu"][aria-label="文本标注"]');
+    const release = (button = 0) =>
+      cell("translation").dispatchEvent(
+        new MouseEvent("mouseup", {
+          bubbles: true,
+          button,
+          clientX: 150,
+          clientY: 150,
+        }),
+      );
+    select("translation", "能量");
+    release();
+    check(popup(), "Translation selection must open annotation actions");
+    controls.closeMenu();
+    release(2);
+    check(!popup(), "Right mouseup must not open left selection menu");
+    controls.bindingSelection = () => {};
+    release();
+    check(!popup(), "Phrase binding must not open creation menu");
+    controls.bindingSelection = undefined;
+    getSelection().removeAllRanges();
+    release();
+    check(!popup(), "Collapsed selection must not open a menu");
     controls.create = originalCreate;
     select("translation", "能量");
     const expected = block.translation.indexOf("能量");

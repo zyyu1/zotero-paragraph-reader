@@ -45,6 +45,10 @@ export class AnnotationControls {
       event.preventDefault();
   };
   private contextHandler: (event: MouseEvent) => void;
+  private selectionHandler = (event: MouseEvent) => {
+    if (event.button !== 0 || this.bindingSelection) return;
+    this.contextHandler(event);
+  };
   private dismissMenu = (event: Event) => {
     if (!this.menu?.contains(event.target as Node)) this.closeMenu();
   };
@@ -282,6 +286,7 @@ export class AnnotationControls {
     };
     ui.root.addEventListener("mousedown", this.preserveRightSelection, true);
     ui.root.addEventListener("contextmenu", this.contextHandler);
+    ui.root.addEventListener("mouseup", this.selectionHandler);
     ui.doc.addEventListener("pointerdown", this.dismissMenu, true);
     ui.doc.addEventListener("scroll", this.closeMenu, true);
     ui.doc.defaultView?.addEventListener("blur", this.closeMenu);
@@ -688,6 +693,7 @@ export class AnnotationControls {
       true,
     );
     this.ui.root.removeEventListener("contextmenu", this.contextHandler);
+    this.ui.root.removeEventListener("mouseup", this.selectionHandler);
     this.ui.doc.removeEventListener("pointerdown", this.dismissMenu, true);
     this.ui.doc.removeEventListener("scroll", this.closeMenu, true);
     this.ui.doc.defaultView?.removeEventListener("blur", this.closeMenu);
