@@ -4,10 +4,6 @@ import {
   registerPrefsScripts,
   registerPrefsWindow,
 } from "./modules/preferenceWindow";
-import {
-  registerReaderTabPanel,
-  updateReaderTabPanels,
-} from "./modules/tabpanel";
 import { buildReaderPopup, updateReaderPopup } from "./modules/popup";
 import { registerNotify } from "./modules/notify";
 import { registerReaderInitializer } from "./modules/reader";
@@ -71,8 +67,6 @@ async function onStartup() {
   registerExtraColumns();
 
   registerItemPaneInfoRows();
-
-  registerReaderTabPanel();
 
   await Promise.all(
     Zotero.getMainWindows().map((win) => onMainWindowLoad(win)),
@@ -264,7 +258,8 @@ function onReaderPopupRefresh() {
 }
 
 function onReaderTabPanelRefresh() {
-  updateReaderTabPanels();
+  // The dedicated reflow reader replaces the inherited translation section.
+  // Keeping that section would duplicate Translate for Zotero in the item pane.
 }
 
 // Add your hooks here. For element click, etc.

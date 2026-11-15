@@ -4,15 +4,17 @@
 
 ## English
 
-Zotero Reflow Translator connects to custom APIs for PDF reflow reading, full-document translation, and paragraph translation. The current version is **0.1.9**. It also supports stacked bilingual text, translation visibility toggles, adjustable reading width, and linked annotations.
+Zotero Reflow Translator connects to custom APIs for PDF reflow reading, full-document translation, and paragraph translation. The current version is **0.1.10**. It also supports stacked bilingual text, translation visibility toggles, adjustable reading width, and linked annotations.
 
-**[Download v0.1.9](https://github.com/zyyu1/zotero-reflow-translator/releases/tag/v0.1.9)** and select the `.xpi` file.
+**[Download v0.1.10](https://github.com/zyyu1/zotero-reflow-translator/releases/tag/v0.1.10)** and select the `.xpi` file.
 
 In Zotero, open **Tools → Plugins**, use the gear menu to select **Install Plugin From File**, and choose the downloaded XPI. Open a PDF, click **PDF 重排翻译 (Zotero Reflow Translator) → API 设置 (API Settings)**, and save your provider settings. You can then click a paragraph to translate it or choose full-document translation. The current translation workflow is English to Simplified Chinese; the reader interface is primarily in Chinese. See the [Chinese installation, API, and annotation guide](docs/PERSONAL_READER_ZH.md) for details.
 
 This version uses its own add-on ID, preference namespace, and cache directory. It extends [BiRead](https://github.com/WWeiyiWang/BiRead), which is based on windingwind's zotero-pdf-translate. The reference commit is `abace0025e513da77f55467583a719a8cb4005a9`. Upstream copyright notices and the AGPL-3.0-or-later license are retained.
 
 ### Features
+
+- Uses the dedicated reflow reader without adding a duplicate translation panel to Zotero's right item pane, avoiding conflicts with Translate for Zotero.
 
 - Fix paragraph clicks after text selection; clicking a paragraph in source-only mode reveals its Chinese translation.
 
@@ -58,15 +60,17 @@ This project retains the upstream AGPL-3.0-or-later license and copyright notice
 
 ### Zotero Reflow Translator · PDF 重排翻译
 
-Zotero Reflow Translator 是一款通过连接自定义 API，在 Zotero 内实现 PDF 重排阅读、全文翻译和段落翻译的插件，当前版本 **0.1.9**。同时支持中英对照、译文显隐、阅读宽度调整和双语关联标注。
+Zotero Reflow Translator 是一款通过连接自定义 API，在 Zotero 内实现 PDF 重排阅读、全文翻译和段落翻译的插件，当前版本 **0.1.10**。同时支持中英对照、译文显隐、阅读宽度调整和双语关联标注。
 
-**[下载 v0.1.9 安装包](https://github.com/zyyu1/zotero-reflow-translator/releases/tag/v0.1.9)**（选择 `.xpi` 文件）。
+**[下载 v0.1.10 安装包](https://github.com/zyyu1/zotero-reflow-translator/releases/tag/v0.1.10)**（选择 `.xpi` 文件）。
 
 请先阅读 [个人版安装、API 与标注使用说明](docs/PERSONAL_READER_ZH.md)。打开 PDF 后点击 **段落阅读 → API 设置**，保存配置后选择翻译单段或全文。
 
 本版本采用独立 ID、配置前缀和缓存目录。基于 [BiRead](https://github.com/WWeiyiWang/BiRead) 扩展，其上游为 windingwind 的 zotero-pdf-translate。参考提交：`abace0025e513da77f55467583a719a8cb4005a9`。保留原项目版权和 AGPL-3.0-or-later 许可证。
 
 ## 功能
+
+- 使用独立的 PDF 重排阅读视图，不再向 Zotero 右侧信息栏添加重复的翻译面板，避免与 Translate for Zotero 冲突。
 
 - 删除确认弹窗支持“以后删除标注不再询问”；勾选并确认后永久记住，可在阅读设置中恢复删除确认。
 
