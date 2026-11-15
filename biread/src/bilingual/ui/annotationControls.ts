@@ -137,7 +137,7 @@ export class AnnotationControls {
       () => void this.create(color.value),
     );
     highlight.title =
-      "中文选择优先匹配英文词语；无法唯一匹配时不会扩大到整句。匹配失败时中文标注保存在本机 BiRead。";
+      "中文选择优先匹配英文词语；无法唯一匹配时不会扩大到整句。匹配失败时中文标注保存在本机 Paragraph Reader。";
     highlight.onmousedown = (event) => event.preventDefault();
     const underline = ui.button(
       "Underline selection",
@@ -334,7 +334,7 @@ export class AnnotationControls {
       this.ui.doc.defaultView?.getSelection()?.removeAllRanges();
       await this.inspect(key);
       this.ui.status.textContent = this.bridge.isLocal(key)
-        ? "中文标注已保存在本机 BiRead；未可靠匹配英文，未同步原 PDF。"
+        ? "中文标注已保存在本机 Paragraph Reader；未可靠匹配英文，未同步原 PDF。"
         : this.bridge.nativeSyncError || "标注已保存并同步到原 PDF。";
       this.ui.status.textContent += " " + this.bridge.alignmentStatus;
       this.ui.status.textContent += modelWarning;
@@ -363,7 +363,7 @@ export class AnnotationControls {
       const label = this.ui.doc.createElement("div");
       label.textContent =
         (this.bridge.isLocal(key)
-          ? "BiRead 本机译文标注（未同步原 PDF） · "
+          ? "Paragraph Reader 本机译文标注（未同步原 PDF） · "
           : "Zotero annotation · ") + key;
       const comment = this.ui.doc.createElement("textarea");
       comment.value = item.annotationComment;

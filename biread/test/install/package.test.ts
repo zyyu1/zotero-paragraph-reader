@@ -20,7 +20,7 @@ installDescribe("Packaged XPI installation", function () {
         "zoteropdftranslate@euclpts.com",
       );
       const temporary = await AddonManager.getAddonByID(
-        "biread@wweiyiwang.github.io",
+        "paragraph-reader@yexun.local",
       );
       if (temporary?.temporarilyInstalled) await temporary.uninstall();
       const install = await AddonManager.getInstallForFile(
@@ -53,7 +53,7 @@ installDescribe("Packaged XPI installation", function () {
         void install.install();
       });
       const installed = await AddonManager.getAddonByID(
-        "biread@wweiyiwang.github.io",
+        "paragraph-reader@yexun.local",
       );
       assert.isOk(installed);
       assert.notEqual(installed!.id, upstream?.id);
@@ -66,7 +66,10 @@ installDescribe("Packaged XPI installation", function () {
       assert.isFalse(installed!.temporarilyInstalled);
       assert.isTrue(installed!.isActive);
       await Zotero.Promise.delay(1000);
-      assert.isOk((Zotero as any).BiRead, "packaged plugin startup completed");
+      assert.isOk(
+        (Zotero as any).ParagraphReader,
+        "packaged plugin startup completed",
+      );
       assert.equal(
         installed!.applyBackgroundUpdates,
         AddonManager.AUTOUPDATE_DISABLE,

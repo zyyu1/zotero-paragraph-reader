@@ -26,4 +26,5 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint:check
       - run: npm run test:bilingual
+      - run: npm run test:personal
       - run: npm run build

@@ -4,15 +4,14 @@ import pkg from "./package.json";
 export default defineConfig({
   source: ["src", "addon"],
   dist: "build",
-  xpiName: `BiRead-${pkg.version}`,
+  xpiName: `ParagraphReader-${pkg.version}`,
   name: pkg.config.addonName,
   id: pkg.config.addonID,
   namespace: pkg.config.addonRef,
-  // Auto-updates are disabled in onStartup until BiRead publishes a verified feed.
-  // Zotero requires this field to be non-empty; keep it on the BiRead project page.
-  updateURL: "https://github.com/WWeiyiWang/BiRead",
-  xpiDownloadLink:
-    "https://github.com/{{owner}}/{{repo}}/releases/download/v{{version}}/{{xpiName}}.xpi",
+  // Zotero requires a URL even for this manually installed personal fork.
+  // The reserved .invalid host cannot serve an update; background updates are disabled.
+  updateURL: "https://paragraph-reader.invalid/update.json",
+  xpiDownloadLink: "https://paragraph-reader.invalid/{{xpiName}}.xpi",
 
   server: {
     asProxy: false,
@@ -33,7 +32,7 @@ export default defineConfig({
             "bilingual.test.tableFixture":
               process.env.BILINGUAL_TABLE_FIXTURE || "",
           },
-          waitForPlugin: "() => !!Zotero.BiRead",
+          waitForPlugin: "() => !!Zotero.ParagraphReader",
           mocha: { timeout: 180000 },
         }
       : {}),

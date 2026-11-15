@@ -123,7 +123,7 @@ try {
     ]
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
-    files.set(`test/biread-bilingual-v1/glossary-${hash}.json`, {
+    files.set(`test/paragraph-reader-v1/glossary-${hash}.json`, {
       energy: "能量",
       stable: "稳定",
     });

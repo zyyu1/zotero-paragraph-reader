@@ -25,7 +25,7 @@ bilingualDescribe("Bilingual Zotero reader integration", function () {
   it("reads a full PDF, caches translation and shares canonical annotations", async function () {
     let stage = "startup";
     try {
-      const running = (Zotero as any).BiRead;
+      const running = (Zotero as any).ParagraphReader;
       assert.isOk(running, "plugin loaded");
       const fixture = Zotero.Prefs.get(
         "bilingual.test.fixture",
@@ -557,7 +557,7 @@ bilingualDescribe("Bilingual Zotero reader integration", function () {
 
 bilingualDescribe("Academic provider contract", function () {
   it("preserves segment IDs and protected citations without modifying shared prompts", async function () {
-    const running = (Zotero as any).BiRead;
+    const running = (Zotero as any).ParagraphReader;
     (globalThis as any).addon = running;
     const service =
       running.data.translate.services.getServiceById("customgpt3");
@@ -624,7 +624,7 @@ bilingualDescribe("Academic provider contract", function () {
 
 bilingualDescribe("Ordinary provider in academic mode", function () {
   it("translates Google text with academic enabled and keeps citations locally", async function () {
-    const running = (Zotero as any).BiRead;
+    const running = (Zotero as any).ParagraphReader;
     (globalThis as any).addon = running;
     setPref("translateSource", "google");
     const service = running.data.translate.services.getServiceById("google");

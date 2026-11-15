@@ -1,4 +1,4 @@
-pref("__prefsPrefix__.enableAuto", true);
+pref("__prefsPrefix__.enableAuto", false);
 pref("__prefsPrefix__.enableDict", true);
 pref("__prefsPrefix__.attachPaperContext", false);
 pref("__prefsPrefix__.enablePopup", true);
@@ -10,7 +10,7 @@ pref("__prefsPrefix__.annotationTranslationPosition", "comment");
 pref("__prefsPrefix__.annotationTranslationPositionInBody", "after");
 pref("__prefsPrefix__.enableNote", true);
 pref("__prefsPrefix__.enableNoteReplaceMode", false);
-pref("__prefsPrefix__.translateSource", "");
+pref("__prefsPrefix__.translateSource", "customgpt1");
 pref("__prefsPrefix__.dictSource", "");
 pref("__prefsPrefix__.sourceLanguage", "en-US");
 pref("__prefsPrefix__.targetLanguage", "");

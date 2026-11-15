@@ -8,7 +8,7 @@ const run = Zotero.Prefs.get("bilingual.test.fixture", true)
 run("Bounded translation scheduling", function () {
   this.timeout(20000);
   it("prioritizes visible pages, bounds requests and restores cache without requests", async function () {
-    const running = (Zotero as any).BiRead;
+    const running = (Zotero as any).ParagraphReader;
     (globalThis as any).addon = running;
     (globalThis as any)._globalThis = Zotero.getMainWindow();
     setPref("translateSource", "google");

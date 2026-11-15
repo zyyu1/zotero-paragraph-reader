@@ -17,7 +17,7 @@ liveDescribe("Opt-in public Google connectivity", function () {
     it(
       provider + " returns Chinese through the actual Zotero provider",
       async function () {
-        (globalThis as any).addon = (Zotero as any).BiRead;
+        (globalThis as any).addon = (Zotero as any).ParagraphReader;
         setPref("translateSource", provider);
         const source = "This is a translation test.";
         const b: any = {

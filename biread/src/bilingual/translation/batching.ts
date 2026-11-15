@@ -11,7 +11,12 @@ export async function translateProgressively(
   update: (block: Block, done: number, total: number) => void,
   cancelled: () => boolean,
   waiting: (block: Block, seconds: number) => void = () => {},
-  options: { concurrency?: number; priority?: () => number } = {},
+  options: {
+    concurrency?: number;
+    priority?: () => number;
+    cacheOnly?: boolean;
+    force?: boolean;
+  } = {},
 ) {
   const cache = new TranslationCache(identity, context);
   let done = 0;
@@ -43,19 +48,23 @@ export async function translateProgressively(
         { id: block.segments[0].id, translation: "摘要" },
       ]);
       done++;
-    } else if (await cache.restore(block)) done++;
+    } else if (!options.force && (await cache.restore(block))) done++;
     else {
-      delete block.translation;
       delete block.error;
-      for (const segment of block.segments) {
-        delete segment.translation;
-        delete segment.translationStart;
-        delete segment.translationEnd;
+      // Keep a valid existing translation (and its annotation offsets) visible
+      // until a replacement has been completely validated.
+      if (!block.translation) {
+        for (const segment of block.segments) {
+          delete segment.translation;
+          delete segment.translationStart;
+          delete segment.translationEnd;
+        }
       }
       pending.push(block);
     }
     update(block, done, blocks.length);
   }
+  if (options.cacheOnly) return;
   // Independent blocks share a bounded queue. In-flight work drains before a
   // restart, so settings changes cannot start a second overlapping scheduler.
   let failure: unknown;

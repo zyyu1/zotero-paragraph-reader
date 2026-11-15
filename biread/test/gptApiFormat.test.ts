@@ -13,11 +13,12 @@ import type Addon from "../src/addon";
 
 /*
  * The service reads the plugin instance from the bare `addon` global in the
- * plugin's own scope. Bridge the running instance (Zotero.BiRead) into
+ * plugin's own scope. Bridge the running instance (Zotero.ParagraphReader) into
  * this context; fall back to a stub since a "title" task never uses refresh.
  */
 if (!(globalThis as { addon?: unknown }).addon) {
-  const running = (Zotero as unknown as { BiRead?: Addon }).BiRead;
+  const running = (Zotero as unknown as { ParagraphReader?: Addon })
+    .ParagraphReader;
   (globalThis as unknown as { addon: unknown }).addon = running ?? {
     api: { getTemporaryRefreshHandler: () => () => {} },
   };

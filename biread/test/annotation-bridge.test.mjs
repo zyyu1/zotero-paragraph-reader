@@ -136,7 +136,7 @@ function fixture(candidate) {
         .map((x) => x.toString(16).padStart(2, "0"))
         .join("");
       files.set(
-        "test/biread-bilingual-v1/glossary-" + hash + ".json",
+        "test/paragraph-reader-v1/glossary-" + hash + ".json",
         glossary,
       );
     },

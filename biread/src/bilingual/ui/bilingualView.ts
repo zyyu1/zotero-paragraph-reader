@@ -8,8 +8,14 @@ import { readerTheme } from "./readerTheme";
 import { selectionOffsets, restoreSelection } from "./textSelection";
 import { createReadingGuide, guideFigureImages } from "./readingGuide";
 import { portableReader } from "./portableReader";
+import { paragraphToggle } from "./paragraphToggle";
 
 export class BilingualView {
+  private paragraphToggles = new Map<
+    string,
+    ReturnType<typeof paragraphToggle>
+  >();
+  onTranslateBlock = async (_block: Block) => {};
   onReference = (_link: import("../parser/referenceLinks").ReadingLink) => {};
   preparePortable = async () => {};
   private exporting = false;
@@ -159,6 +165,8 @@ export class BilingualView {
   private scrollTimer?: ReturnType<typeof setTimeout>;
   dispose() {
     this.disposed = true;
+    for (const toggle of this.paragraphToggles.values()) toggle.dispose();
+    this.paragraphToggles.clear();
     clearTimeout(this.scrollTimer);
   }
   onReadingMode = (_mode: string) => {};
@@ -245,6 +253,20 @@ export class BilingualView {
 
     `;
     style.textContent += readerTheme;
+    style.textContent += `
+      #zpt-bilingual:not([data-reading-mode=compare]) .bi-row { max-width:var(--reading-width,960px); }
+      #zpt-bilingual[data-layout=stacked]:not([data-reading-mode=compare]) .bi-columns { grid-template-columns:1fr; }
+      #zpt-bilingual[data-layout=stacked]:not([data-reading-mode=compare]) .bi-translation { border-left:0; border-top:1px solid #8882; padding-top:12px; margin-top:10px; }
+      #zpt-bilingual[data-language=translation]:not([data-reading-mode=compare]) .bi-translation { border-top:0; margin-top:0; }
+      #zpt-bilingual .pr-translation-hidden { display:none!important; }
+      #zpt-bilingual .bi-row[data-translation-hidden=true] > .bi-columns { grid-template-columns:1fr; }
+      #zpt-bilingual .bi-source[data-translation-hidden=true] { display:block!important; }
+      #zpt-bilingual [data-paragraph-toggle]:focus-visible { outline:2px solid #927858; outline-offset:2px; }
+      @media(max-width:700px) {
+        #zpt-bilingual:not([data-reading-mode=compare]) .bi-columns { grid-template-columns:1fr; }
+        #zpt-bilingual:not([data-reading-mode=compare]) .bi-translation { border-left:0; }
+      }
+    `;
     root.append(style);
     this.controls = doc.createElement("div");
     this.controls.className = "bi-controls";
@@ -292,7 +314,7 @@ export class BilingualView {
         lines.setAttribute("transform", "translate(512 0) scale(-1 1)");
       logo.append(lines);
     }
-    title.append(logo, doc.createTextNode("BiRead"));
+    title.append(logo, doc.createTextNode("Paragraph Reader"));
     this.primary.append(title, pdfButton);
     this.primary.append(
       this.button("论文导读", () => {
@@ -333,11 +355,11 @@ export class BilingualView {
           const picker = new FilePicker();
           picker.init(
             Zotero.getMainWindow(),
-            "导出 BiRead 离线阅读文件",
+            "导出 Paragraph Reader 离线阅读文件",
             picker.modeSave,
           );
-          picker.appendFilter("BiRead 阅读文件", "*.html");
-          picker.defaultString = "BiRead-paper.html";
+          picker.appendFilter("Paragraph Reader 阅读文件", "*.html");
+          picker.defaultString = "Paragraph Reader-paper.html";
           const result = await picker.show();
           if (result !== picker.returnOK && result !== picker.returnReplace)
             return;
@@ -389,7 +411,7 @@ export class BilingualView {
       "阅读模式",
       "bilingual.readingMode",
       [
-        ["immersive", "沉浸式阅读"],
+        ["immersive", "段落重排阅读"],
         ["compare", "PDF 对照"],
       ],
       "immersive",
@@ -406,6 +428,31 @@ export class BilingualView {
     );
     modeSwitch.classList.add("bi-mode-switch");
     this.modeRow.append(modeSwitch);
+    this.selectSetting(
+      "段落布局",
+      "bilingual.paragraphLayout",
+      [
+        ["stacked", "上下段落对照"],
+        ["columns", "左右段落对照"],
+      ],
+      "stacked",
+      (value) => {
+        root.dataset.layout = value;
+      },
+    );
+    this.selectSetting(
+      "阅读宽度",
+      "bilingual.readingWidth",
+      [
+        ["760", "窄 · 760px"],
+        ["960", "适中 · 960px"],
+        ["1280", "宽 · 1280px"],
+      ],
+      "960",
+      (value) => {
+        root.style.setProperty("--reading-width", value + "px");
+      },
+    );
     const collapse = doc.createElement("button");
     collapse.type = "button";
     collapse.className = "bi-collapse-settings";
@@ -433,7 +480,7 @@ export class BilingualView {
       [
         ["both", "中英对照"],
         ["translation", "仅中文"],
-        ["source", "仅英文"],
+        ["source", "仅外文"],
       ],
       "both",
       (value) => (root.dataset.language = value),
@@ -500,7 +547,7 @@ export class BilingualView {
     button.type = "button";
     const labels: Record<string, string> = {
       Pause: "暂停翻译",
-      "Retry / Resume": "继续 / 重试",
+      "Retry / Resume": "翻译全文 / 继续",
       Glossary: "术语表",
       "Highlight selection": "高亮",
       "Underline selection": "划线",
@@ -521,6 +568,8 @@ export class BilingualView {
     return button;
   }
   showBlocks(blocks: Block[]) {
+    for (const toggle of this.paragraphToggles.values()) toggle.dispose();
+    this.paragraphToggles.clear();
     this.portableImages.clear();
     this.paperGuide = undefined;
     this.guidePanel?.remove();
@@ -704,6 +753,24 @@ export class BilingualView {
         tr.insertBefore(cell, next || null);
       } else section.append(row);
       this.rows.set(block.id, { row, source, translation });
+      if (
+        block.source.trim() &&
+        !["reference", "equation", "original-page"].includes(block.kind)
+      ) {
+        this.paragraphToggles.set(
+          block.id,
+          paragraphToggle(
+            row,
+            source,
+            translation,
+            block,
+            () => this.onTranslateBlock(block),
+            () => {
+              this.status.textContent = "本段翻译失败，请再次点击段落重试。";
+            },
+          ),
+        );
+      }
       if (block.links?.length) {
         const links = this.doc.createElement("details");
         links.className = "bi-reference-links";
@@ -904,7 +971,7 @@ export class BilingualView {
       block.translation ??
       (block.error
         ? `翻译暂停：${block.error} 点击 Retry / Resume 重试。`
-        : "等待翻译…");
+        : "点击段落开始翻译。");
     renderHighlights(
       row.translation,
       translated,
@@ -915,6 +982,7 @@ export class BilingualView {
     );
     row.translation.classList.toggle("bi-wait", !block.translation);
     this.renderInlineMath(block);
+    this.paragraphToggles.get(block.id)?.refresh();
   }
   emphasize(key?: string) {
     for (const mark of Array.from(

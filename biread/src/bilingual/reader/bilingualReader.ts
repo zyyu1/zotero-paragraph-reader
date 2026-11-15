@@ -28,6 +28,7 @@ import { getPref, setPref } from "../../utils/prefs";
 
 import { AnnotationControls } from "../ui/annotationControls";
 import { analyzeWithLocalEngine } from "./layoutEngine";
+import { showApiSettings } from "../ui/apiSettings";
 class Session {
   readonly ui: BilingualView;
   private compare: CompareMode;
@@ -208,9 +209,33 @@ class Session {
     provider.value = String(getPref("translateSource") || "google");
     provider.onchange = () => {
       setPref("translateSource", provider.value);
-      this.restart();
+      this.paused = true;
+      this.restartRequested = false;
+      this.ui.status.textContent =
+        "服务已切换。等待当前请求结束后，可翻译单段或全文。";
     };
     this.ui.settings.append(provider);
+    this.ui.primary.append(
+      this.ui.button("API 设置", () => {
+        showApiSettings(
+          this.ui,
+          () => !this.running,
+          () => {
+            provider.value = "customgpt1";
+            this.ui.status.textContent =
+              "已启用自定义 API，直接点击段落开始翻译。";
+          },
+        );
+      }),
+    );
+    this.ui.onTranslateBlock = async (block) => {
+      if (this.running) {
+        this.ui.status.textContent =
+          "请先暂停翻译，等待当前请求结束后再翻译此段。";
+        return;
+      }
+      await this.run({ block });
+    };
     this.ui.button("Pause", () => {
       this.restartRequested = false;
       this.paused = true;
@@ -235,7 +260,7 @@ class Session {
       if (this.lastBlock) this.ui.scrollTo(this.lastBlock);
       return;
     }
-    await this.run();
+    await this.run({ cacheOnly: true });
   }
   showPDF(block?: Block) {
     this.lastBlock = block?.id || this.ui.visibleBlock();
@@ -257,7 +282,9 @@ class Session {
         "正在等待当前请求结束，随后使用新设置继续（最长 90 秒）…";
     } else void this.run();
   }
-  async run() {
+  async run(
+    options: { block?: Block; force?: boolean; cacheOnly?: boolean } = {},
+  ) {
     if (this.running || this.disposed) return;
     this.running = true;
     this.paused = false;
@@ -311,7 +338,7 @@ class Session {
         : "";
       this.ui.status.textContent = "正在请求 " + context.provider + notice;
       await translateProgressively(
-        this.document.blocks,
+        options.block ? [options.block] : this.document.blocks,
         this.integration.identity,
         context,
         this.integration.item.id,
@@ -329,6 +356,8 @@ class Session {
             this.ui.status.textContent = `TRANSLATING · ${context.provider} · p. ${block.pageLabel} · 当前段 ${seconds} 秒 · 单次请求超时 90 秒${notice}`;
         },
         {
+          cacheOnly: options.cacheOnly,
+          force: options.force,
           concurrency: Number(getPref("bilingual.concurrency") || 2),
           priority: () => {
             const visible = this.ui.visibleBlock();
@@ -339,6 +368,9 @@ class Session {
           },
         },
       );
+      if (options.cacheOnly && !this.disposed)
+        this.ui.status.textContent =
+          "重排已就绪。可配置 API 后翻译单段或全文；已有译文已从本机缓存恢复。";
     } catch (error) {
       if (!this.disposed)
         this.ui.status.textContent =
@@ -438,7 +470,7 @@ function toolbar({ reader, doc, append }: any) {
   if (!active || (reader.type && reader.type !== "pdf")) return;
   const button = doc.createElement("button");
   button.className = "toolbar-button";
-  button.textContent = "BILINGUAL";
+  button.textContent = "段落阅读";
   button.style.width = "auto";
   button.style.padding = "0 8px";
   button.title = "全文双语阅读 / Full bilingual reading";

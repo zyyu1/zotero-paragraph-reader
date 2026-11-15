@@ -1,15 +1,21 @@
 {
-  "name": "biread-zotero",
-  "version": "0.1.28-beta.5",
-  "description": "Bilingual PDF Reader for Zotero",
+  "name": "zotero-paragraph-reader",
+  "version": "0.1.2",
+  "description": "Paragraph reflow, bilingual translation and linked Zotero annotations",
   "config": {
-    "addonName": "BiRead — Bilingual PDF Reader for Zotero",
-    "addonID": "biread@wweiyiwang.github.io",
-    "addonRef": "biread",
-    "prefsPrefix": "extensions.zotero.BiRead",
-    "addonInstance": "BiRead"
+    "addonName": "Paragraph Reader · 段落阅读",
+    "addonID": "paragraph-reader@yexun.local",
+    "addonRef": "paragraphreader",
+    "prefsPrefix": "extensions.zotero.ParagraphReader",
+    "addonInstance": "ParagraphReader"
   },
   "main": "src/index.ts",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zyyu1/zotero-paragraph-reader.git",
+    "directory": "biread"
+  },
   "scripts": {
     "start": "zotero-plugin serve",
     "build": "tsc --noEmit && node build-local.mjs",
@@ -19,18 +25,12 @@
     "lint:check": "prettier --check . && eslint .",
     "test": "zotero-plugin test",
     "update-deps": "npm update --save",
-    "test:bilingual": "node --test test/paragraph-flow.test.mjs test/region-layout.test.mjs test/bilingual-core.test.mjs test/annotation-bridge.test.mjs test/annotation-range.test.mjs test/annotation-provider.test.mjs test/local-model-install.test.mjs test/portable-reader.test.mjs test/model-layout.test.mjs test/reference-links.test.mjs test/paper-guide.test.mjs"
+    "test:bilingual": "node --test test/paragraph-flow.test.mjs test/region-layout.test.mjs test/bilingual-core.test.mjs test/annotation-bridge.test.mjs test/annotation-range.test.mjs test/annotation-provider.test.mjs test/local-model-install.test.mjs test/portable-reader.test.mjs test/model-layout.test.mjs test/reference-links.test.mjs test/paper-guide.test.mjs",
+    "test:personal": "node --test test/personal-reader.test.mjs"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/WWeiyiWang/BiRead.git"
-  },
-  "author": "BiRead: WWeiyiWang; upstream zotero-pdf-translate: windingwind and contributors",
+  "author": "Personal fork; based on BiRead by WWeiyiWang and zotero-pdf-translate by windingwind and contributors",
   "license": "AGPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/WWeiyiWang/BiRead/issues"
-  },
-  "homepage": "https://github.com/WWeiyiWang/BiRead#readme",
+  "homepage": "https://github.com/zyyu1/zotero-paragraph-reader#readme",
   "dependencies": {
     "franc": "^6.2.0",
     "iso639-js": "^1.1.3",

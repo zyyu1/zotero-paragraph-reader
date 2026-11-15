@@ -38,6 +38,41 @@ const server = http.createServer(async (req, res) => {
   const isAnthropic = req.url.includes("/v1/messages");
   console.log(`[mock] ${req.method} ${req.url} stream=${body.stream}`);
 
+  if (req.url === "/paragraph/v1/chat/completions") {
+    if (
+      req.headers.authorization !== "Bearer fixture-key" ||
+      body.model !== "fixture-model"
+    ) {
+      res.writeHead(401, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({ error: "Fixture credentials or model missing" }),
+      );
+      return;
+    }
+    const user = body.messages.find(
+      (message) => message.role === "user",
+    )?.content;
+    let result = "你好";
+    try {
+      const segments = JSON.parse(user);
+      result = JSON.stringify(
+        segments.map((segment) => ({
+          id: segment.id,
+          translation: "土壤样本为研究提供依据。",
+        })),
+      );
+    } catch {
+      /* The connection check sends the fixed Hello sample. */
+    }
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        choices: [{ message: { role: "assistant", content: result } }],
+      }),
+    );
+    return;
+  }
+
   if (!body.stream) {
     const payload = isAnthropic
       ? {

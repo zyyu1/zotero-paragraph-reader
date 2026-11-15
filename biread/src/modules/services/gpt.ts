@@ -349,11 +349,13 @@ const gptTranslate = async function (
       }
     : {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${data.secret}`,
-        "api-key": data.secret,
+        ...(data.secret
+          ? { Authorization: `Bearer ${data.secret}`, "api-key": data.secret }
+          : {}),
       };
 
   const xhr = await Zotero.HTTP.request("POST", apiURL, {
+    timeout: 90000,
     headers: requestHeaders,
     body: JSON.stringify(requestBody),
     responseType: "text",

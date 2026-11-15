@@ -41,5 +41,5 @@ declare class MozXULElement {
 }
 
 declare namespace Zotero {
-  const BiRead: import("../src/addon").default;
+  const ParagraphReader: import("../src/addon").default;
 }

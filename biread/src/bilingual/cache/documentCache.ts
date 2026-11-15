@@ -2,7 +2,7 @@ import type { DocumentData } from "../types";
 import { DOCUMENT_PARSER_VERSION } from "../types";
 
 export const cacheRoot = () =>
-  PathUtils.join(Zotero.DataDirectory.dir, "biread-bilingual-v1");
+  PathUtils.join(Zotero.DataDirectory.dir, "paragraph-reader-v1");
 export async function readJSON<T>(name: string): Promise<T | undefined> {
   const path = PathUtils.join(cacheRoot(), name + ".json");
   if (!(await IOUtils.exists(path))) return;
