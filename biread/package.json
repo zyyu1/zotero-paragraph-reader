@@ -1,6 +1,6 @@
 {
   "name": "zotero-paragraph-reader",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Paragraph reflow, bilingual translation and linked Zotero annotations",
   "config": {
     "addonName": "Paragraph Reader · 段落阅读",

@@ -9,6 +9,63 @@ import { pathToFileURL } from "node:url";
 const dir = await mkdtemp(join(tmpdir(), "paragraph-reader-"));
 after(() => rm(dir, { recursive: true, force: true }));
 await build({
+  entryPoints: ["src/bilingual/annotations/deleteConfirmation.ts"],
+  outfile: join(dir, "confirmation.mjs"),
+  bundle: true,
+  platform: "node",
+  format: "esm",
+});
+const { confirmAnnotationDeletion } = await import(
+  pathToFileURL(join(dir, "confirmation.mjs"))
+);
+test("delete confirmation remembers only confirmed checkbox choices and can be restored", () => {
+  const prefs = new Map();
+  const parent = {};
+  globalThis.Zotero = {
+    getMainWindow: () => parent,
+    Prefs: {
+      get: (key) => prefs.get(key),
+      set: (key, value) => prefs.set(key, value),
+    },
+  };
+  let accepted = false,
+    checked = true,
+    calls = 0;
+  globalThis.Services = {
+    prompt: {
+      confirmCheck: (win, title, message, label, state) => {
+        calls++;
+        assert.equal(win, parent);
+        assert.equal(title, "删除标注");
+        assert.match(label, /不再询问/);
+        assert.equal(state.value, false);
+        state.value = checked;
+        return accepted;
+      },
+    },
+  };
+  assert.equal(confirmAnnotationDeletion(false), false);
+  assert.equal(prefs.size, 0, "Cancel must not remember even a checked option");
+  accepted = true;
+  checked = false;
+  assert.equal(confirmAnnotationDeletion(true), true);
+  assert.equal(prefs.size, 0, "Unchecked confirmation must prompt next time");
+  checked = true;
+  assert.equal(confirmAnnotationDeletion(false), true);
+  assert.equal(calls, 3);
+  assert.equal([...prefs.values()][0], true);
+  assert.equal(confirmAnnotationDeletion(true), true);
+  assert.equal(confirmAnnotationDeletion(false), true);
+  assert.equal(
+    calls,
+    3,
+    "Remembered preference skips both local and native annotation prompts",
+  );
+  prefs.set([...prefs.keys()][0], false);
+  assert.equal(confirmAnnotationDeletion(false), true);
+  assert.equal(calls, 4, "Restoring confirmation makes the dialog return");
+});
+await build({
   entryPoints: ["src/bilingual/translation/customApi.ts"],
   outfile: join(dir, "api.mjs"),
   bundle: true,

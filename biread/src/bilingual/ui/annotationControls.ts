@@ -3,6 +3,7 @@ import type { BilingualView } from "./bilingualView";
 import type { PDFIntegration } from "../reader/pdfIntegration";
 import { AnnotationBridge } from "../annotations/zoteroAnnotationBridge";
 import { getPref, setPref } from "../../utils/prefs";
+import { skipDeleteConfirmationPref } from "../annotations/deleteConfirmation";
 import {
   installLocalModel,
   ensureLocalModel,
@@ -100,6 +101,10 @@ export class AnnotationControls {
     const highlightColor = toolColor("highlight", "高亮颜色", "#ffd400");
     const underlineColor = toolColor("underline", "下划线颜色", "#000000");
     const commentColor = toolColor("comment", "标注颜色", "#808080");
+    ui.button("恢复删除确认", () => {
+      setPref(skipDeleteConfirmationPref, false);
+      ui.status.textContent = "已恢复删除标注前的确认弹窗。";
+    });
     const installModel = ui.button("一键安装本地模型", async () => {
       installModel.disabled = true;
       try {

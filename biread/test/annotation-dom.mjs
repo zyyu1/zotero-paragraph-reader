@@ -59,6 +59,7 @@ try {
     };
     window.Components = { utils: { cloneInto: (v) => v } };
     window.confirm = () => true;
+    window.Services = { prompt: { confirmCheck: () => true } };
     const integration = {
       identity: "annotation-dom",
       item: {

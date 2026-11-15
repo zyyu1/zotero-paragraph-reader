@@ -1,4 +1,5 @@
 import type { Block, LinkedAnnotation } from "../types";
+import { confirmAnnotationDeletion } from "./deleteConfirmation";
 import type { PDFIntegration } from "../reader/pdfIntegration";
 import { focusAnnotation } from "../reader/pdfIntegration";
 import { digest, readJSON, writeJSON } from "../cache/documentCache";
@@ -342,7 +343,7 @@ export class AnnotationBridge {
     if (this.isLocal(key)) {
       if (!this.integration.item.isEditable())
         throw new Error("This attachment is read-only.");
-      if (!this.integration.win.confirm("删除这条译文标注？")) return;
+      if (!confirmAnnotationDeletion(true)) return;
       this.local = this.local.filter((a) => a.key !== key);
       await this.saveLocal();
       this.changed();
@@ -350,12 +351,7 @@ export class AnnotationBridge {
     }
     const item = this.item(key);
     if (!item.isEditable()) throw new Error("This annotation is read-only.");
-    if (
-      !this.integration.win.confirm(
-        "Delete this Zotero annotation and its linked bilingual highlight?",
-      )
-    )
-      return;
+    if (!confirmAnnotationDeletion(false)) return;
     await item.eraseTx();
     await this.refresh();
   }

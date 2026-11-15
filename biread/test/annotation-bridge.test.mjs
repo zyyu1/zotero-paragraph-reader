@@ -48,6 +48,7 @@ function fixture(candidate) {
     writeJSON: async (p, v) => files.set(p, structuredClone(v)),
   };
   globalThis.Zotero = {
+    getMainWindow: () => null,
     Prefs: { get: () => undefined },
     DataDirectory: { dir: "test" },
     logError: (e) => {
@@ -77,6 +78,7 @@ function fixture(candidate) {
         }),
     },
   };
+  globalThis.Services = { prompt: { confirmCheck: () => true } };
   const source = "Archives preserve collective memory and tradition.";
   const translation = "档案保存集体记忆和传统。";
   const block = {
