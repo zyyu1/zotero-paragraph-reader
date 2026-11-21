@@ -1,6 +1,6 @@
 {
   "name": "zotero-reflow-translator",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Connect custom APIs for PDF reflow, full-document translation, and paragraph translation in Zotero",
   "config": {
     "addonName": "Zotero Reflow Translator · PDF 重排翻译",
