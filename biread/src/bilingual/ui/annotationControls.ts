@@ -58,6 +58,14 @@ export class AnnotationControls {
     this.selectionPreview.forEach((node) => node.remove());
     this.selectionPreview = [];
   };
+  private async closeInspector() {
+    await this.flushComment();
+    this.flushComment = async () => {};
+    this.commentDirty = () => false;
+    this.selectedKey = undefined;
+    this.bindingSelection = undefined;
+    this.ui.inspector.replaceChildren();
+  }
   constructor(
     private ui: BilingualView,
     private integration: PDFIntegration,
@@ -430,6 +438,9 @@ export class AnnotationControls {
     this.busy = true;
     this.ui.status.textContent = "正在查找双语词组对应关系…";
     try {
+      // Creating a mark is not selecting it. Keep the editor hidden until the
+      // user explicitly opens an existing annotation for editing.
+      await this.closeInspector();
       let modelWarning = "";
       try {
         await ensureLocalModel((text) => {
@@ -448,18 +459,13 @@ export class AnnotationControls {
       );
 
       this.ui.doc.defaultView?.getSelection()?.removeAllRanges();
-      await this.inspect(key);
       this.ui.status.textContent = this.bridge.isLocal(key)
         ? "中文标注已保存在本机 Zotero Reflow Translator；未可靠匹配英文，未同步原 PDF。"
         : this.bridge.nativeSyncError || "标注已保存并同步到原 PDF。";
       this.ui.status.textContent += " " + this.bridge.alignmentStatus;
       this.ui.status.textContent += modelWarning;
       if (focusComment)
-        this.ui.inspector
-          .querySelector<HTMLTextAreaElement>(
-            "textarea[data-canonical-comment]",
-          )
-          ?.focus();
+        this.ui.status.textContent += " 点击标注并选择“编辑批注”后可填写内容。";
     } catch (error) {
       this.ui.status.textContent = String(error);
     } finally {
@@ -543,10 +549,7 @@ export class AnnotationControls {
         });
       close.onclick = () =>
         void act(async () => {
-          await flush();
-          panel.replaceChildren();
-          this.selectedKey = undefined;
-          this.bindingSelection = undefined;
+          await this.closeInspector();
         });
       const relink = this.ui.doc.createElement("button");
       relink.textContent = "绑定 / 重新关联词组";

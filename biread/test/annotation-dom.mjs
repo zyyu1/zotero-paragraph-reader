@@ -337,6 +337,10 @@ try {
     await controls.create("#000000", "underline");
     const first = [...items.values()][0];
     check(
+      ui.inspector.childElementCount === 0,
+      "Creating a mark must not open the annotation editor",
+    );
+    check(
       first?.annotationText === "energy" &&
         first.annotationType === "underline" &&
         first.annotationColor === "#000000",
@@ -394,14 +398,34 @@ try {
     );
     select("source", "formula");
     await controls.create("#808080", "highlight", undefined, true);
+    const commentItem = [...items.values()].find(
+      (item) => item.annotationColor === "#808080",
+    );
     check(
-      [...items.values()].some((item) => item.annotationColor === "#808080"),
+      commentItem && ui.inspector.childElementCount === 0,
       "Gray comment mark not persisted",
     );
+    const commentMark = [...cell("source").querySelectorAll("mark")].find(
+      (mark) => mark.dataset.keys.split(" ").includes(commentItem.key),
+    );
+    commentMark.click();
+    const editButton = [
+      ...document.querySelectorAll(
+        '[role="menu"][aria-label="标注操作"] button',
+      ),
+    ].find((button) => button.textContent === "编辑批注");
+    editButton.click();
+    for (
+      let n = 0;
+      n < 100 &&
+      !ui.inspector.querySelector('select[aria-label="Annotation colour"]');
+      n++
+    )
+      await new Promise((resolve) => setTimeout(resolve, 10));
     check(
       ui.inspector.querySelector('select[aria-label="Annotation colour"]')
         .value === "#808080",
-      "Annotation editor must retain gray",
+      "Selecting and editing an annotation must open its editor",
     );
     getSelection().removeAllRanges();
     const keys = [...items.keys()];
@@ -491,6 +515,7 @@ try {
         "reference preview and exact destination",
         "independent yellow/black/gray defaults and palettes",
         "black underline and gray comment persistence",
+        "annotation editor opens only after selecting an existing mark",
         "left-click delete popup for highlights, underlines and comments",
         "Escape dismisses without deleting; deletion updates native PDF and both languages",
       ],

@@ -4,9 +4,9 @@
 
 ## English
 
-Zotero Reflow Translator connects to custom APIs for PDF reflow reading, full-document translation, and paragraph translation. The current version is **0.1.12**. It also supports stacked bilingual text, translation visibility toggles, adjustable reading width, and linked annotations.
+Zotero Reflow Translator connects to custom APIs for PDF reflow reading, full-document translation, and paragraph translation. The current version is **0.1.13**. It also supports stacked bilingual text, translation visibility toggles, adjustable reading width, and linked annotations.
 
-**[Download v0.1.12](https://github.com/zyyu1/zotero-reflow-translator/releases/tag/v0.1.12)** and select the `.xpi` file.
+**[Download v0.1.13](https://github.com/zyyu1/zotero-reflow-translator/releases/tag/v0.1.13)** and select the `.xpi` file.
 
 In Zotero, open **Tools → Plugins**, use the gear menu to select **Install Plugin From File**, and choose the downloaded XPI. Open a PDF, click **PDF 重排翻译 (Zotero Reflow Translator) → API 设置 (API Settings)**, and save your provider settings. You can then click a paragraph to translate it or choose full-document translation. The current translation workflow is English to Simplified Chinese; the reader interface is primarily in Chinese. See the [Chinese installation, API, and annotation guide](docs/PERSONAL_READER_ZH.md) for details.
 
@@ -57,9 +57,9 @@ This project retains the upstream AGPL-3.0-or-later license and copyright notice
 
 Zotero Reflow Translator 是一款 Zotero PDF 重排翻译插件。它通过连接自定义 API，在 Zotero 内提供 PDF 重排阅读、全文翻译和段落翻译。
 
-当前版本：**v0.1.12**
+当前版本：**v0.1.13**
 
-**[下载 ZoteroReflowTranslator-0.1.12.xpi](https://github.com/zyyu1/zotero-reflow-translator/releases/download/v0.1.12/ZoteroReflowTranslator-0.1.12.xpi)**
+**[下载 ZoteroReflowTranslator-0.1.13.xpi](https://github.com/zyyu1/zotero-reflow-translator/releases/download/v0.1.13/ZoteroReflowTranslator-0.1.13.xpi)**
 
 ### 主要功能
 
