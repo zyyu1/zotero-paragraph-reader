@@ -162,7 +162,7 @@ export class AnnotationControls {
       () => void this.create(highlightColor.value),
     );
     highlight.title =
-      "中文选择优先匹配英文词语；无法唯一匹配时不会扩大到整句。匹配失败时中文标注保存在本机 Zotero Reflow Translator。";
+      "外文与中文选区会双向匹配并同步高亮；必要时调用当前翻译服务匹配对应词组。无法唯一匹配时不会扩大到整句。";
     highlight.onmousedown = (event) => event.preventDefault();
     const underline = ui.button(
       "Underline selection",
@@ -428,7 +428,7 @@ export class AnnotationControls {
     if (!block || (selection.side === "translation" && !block.translation))
       return;
     this.busy = true;
-    this.ui.status.textContent = "正在查找本地词组对应关系…";
+    this.ui.status.textContent = "正在查找双语词组对应关系…";
     try {
       let modelWarning = "";
       try {

@@ -4,9 +4,12 @@ import type { PDFIntegration } from "../reader/pdfIntegration";
 import { focusAnnotation } from "../reader/pdfIntegration";
 import { digest, readJSON, writeJSON } from "../cache/documentCache";
 import {
+  alignmentContext,
+  contextualRange,
   preciseTranslationRange,
   preciseSourceRange,
 } from "../alignment/selectionMapping";
+import { annotationCandidate } from "../translation/providers";
 import { loadGlossary } from "../glossary/documentGlossary";
 import { localModelConfigured } from "../alignment/localModel";
 import { alignedSelectionRange } from "../alignment/annotationRange";
@@ -565,6 +568,23 @@ export class AnnotationBridge {
         end,
         async () => undefined,
       );
+    if (!counterpart && snapshot) {
+      const context = alignmentContext(block, side, start, end);
+      if (context) {
+        try {
+          const raw = await annotationCandidate(
+            context,
+            this.integration.item.id,
+          );
+          counterpart = contextualRange(block, side, start, end, raw);
+          if (counterpart) this.alignmentStatus = "翻译服务上下文匹配（双向）";
+        } catch {
+          // A provider outage must not block an annotation. The local model or
+          // manual phrase binding remains available as a fallback.
+          this.alignmentStatus = "翻译服务未完成词组匹配，正在尝试本地匹配。";
+        }
+      }
+    }
     if (!counterpart && localModelConfigured() && snapshot) {
       try {
         counterpart = await alignedSelectionRange(block, side, start, end);

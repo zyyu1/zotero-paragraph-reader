@@ -306,6 +306,84 @@ test("English word only marks the matching Chinese phrase", async () => {
   assert.equal(mapping.type, "underline");
 });
 
+test("translation provider synchronizes an English highlight to its Chinese phrase", async () => {
+  let received;
+  const { block, newBridge } = fixture(async (context) => {
+    received = context;
+    return JSON.stringify({ quote: "集体记忆", confident: true });
+  });
+  const bridge = newBridge();
+  await bridge.start();
+  const start = block.source.indexOf("collective memory");
+  await bridge.create(block, "source", start, start + 17, "#ffd400");
+
+  const mapping = bridge.mappings(block)[0];
+  assert.equal(received.side, "source");
+  assert.equal(received.selected, "collective memory");
+  assert.equal(mapping.source.text, "collective memory");
+  assert.equal(mapping.translation.text, "集体记忆");
+  assert.match(bridge.alignmentStatus, /双向/);
+});
+
+test("translation provider synchronizes a Chinese highlight to its English phrase", async () => {
+  let received;
+  const { block, newBridge, items } = fixture(async (context) => {
+    received = context;
+    return JSON.stringify({ quote: "collective memory", confident: true });
+  });
+  const bridge = newBridge();
+  await bridge.start();
+  const start = block.translation.indexOf("集体记忆");
+  const key = await bridge.create(
+    block,
+    "translation",
+    start,
+    start + 4,
+    "#ff6666",
+  );
+
+  const mapping = bridge.mappings(block)[0];
+  assert.equal(received.side, "translation");
+  assert.equal(received.selected, "集体记忆");
+  assert.equal(mapping.source.text, "collective memory");
+  assert.equal(mapping.translation.text, "集体记忆");
+  assert.equal(items.get(key).annotationText, "collective memory");
+  assert.equal(bridge.isLocal(key), false);
+});
+
+test("Abstract highlight maps to 摘要 instead of an unrelated sentence", async () => {
+  const { block, newBridge } = fixture(async (context) => {
+    assert.equal(context.selected, "Abstract");
+    return JSON.stringify({ quote: "摘要", confident: true });
+  });
+  block.source =
+    "Abstract—Wireless communication has given rise to integrated sensing.";
+  block.translation = "摘要—无线通信催生了集成感知。";
+  block.segments = [
+    {
+      id: "abstract",
+      sourceStart: 0,
+      sourceEnd: block.source.length,
+      translationStart: 0,
+      translationEnd: block.translation.length,
+    },
+  ];
+  block.anchors = [...block.source].map((_, i) => ({
+    start: i,
+    end: i + 1,
+    charIndex: i,
+    pageIndex: 0,
+    rect: [i * 5, 700, i * 5 + 5, 710],
+  }));
+  const bridge = newBridge();
+  await bridge.start();
+  await bridge.create(block, "source", 0, 8, "#ffd400");
+
+  const mapping = bridge.mappings(block)[0];
+  assert.equal(mapping.source.text, "Abstract");
+  assert.equal(mapping.translation.text, "摘要");
+});
+
 test("English unmatched word never expands to a Chinese sentence", async () => {
   const { block, newBridge } = fixture(async () => "不存在");
   const bridge = newBridge();
