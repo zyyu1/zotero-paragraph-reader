@@ -38,6 +38,7 @@ function fixture(candidate) {
   const files = new Map(),
     items = new Map();
   let id = 0;
+  let observer;
   globalThis.candidate = candidate;
   globalThis._globalThis = { crypto: globalThis.crypto, TextEncoder };
   globalThis.PathUtils = { join: (...p) => p.join("/") };
@@ -55,7 +56,10 @@ function fixture(candidate) {
       throw e;
     },
     Notifier: {
-      registerObserver: () => "observer",
+      registerObserver: (value) => {
+        observer = value;
+        return "observer";
+      },
       unregisterObserver: () => {},
     },
     DataObjectUtilities: { generateKey: () => "KEY" + ++id },
@@ -126,6 +130,7 @@ function fixture(candidate) {
     items,
     integration,
     newBridge,
+    notifyItem: () => observer.notify("add", "item"),
     setGlossary: async (glossary) => {
       const hash = [
         ...new Uint8Array(
@@ -592,13 +597,12 @@ test("native PDF underline is aligned and restored after reopening", async () =>
   });
   Zotero.Prefs.get = () => "model-config";
   let bridge = newBridge();
-  await bridge.start();
   let calls = 0;
   bridge.resolvePair = async () => {
     calls++;
     return { counterpart: [4, 8] };
   };
-  await bridge.reconcile(block);
+  await bridge.start();
   assert.equal(calls, 1);
   assert.equal(bridge.mappings(block)[0].translation.text, "集体记忆");
   assert.equal(bridge.mappings(block)[0].type, "underline");
@@ -609,5 +613,57 @@ test("native PDF underline is aligned and restored after reopening", async () =>
   bridge = newBridge();
   await bridge.start();
   assert.equal(bridge.mappings(block)[0].translation.text, "集体记忆");
+  bridge.dispose();
+});
+
+test("existing native source highlight is synchronized when the bridge starts", async () => {
+  const { block, items, newBridge, setGlossary } = fixture();
+  const start = block.source.indexOf("collective memory");
+  items.set("NATIVE-HIGHLIGHT", {
+    key: "NATIVE-HIGHLIGHT",
+    annotationType: "highlight",
+    annotationColor: "#ffd400",
+    annotationComment: "",
+    annotationPosition: JSON.stringify({
+      pageIndex: 0,
+      rects: [[start * 5, 700, (start + 17) * 5, 710]],
+    }),
+  });
+  await setGlossary({ "collective memory": "集体记忆" });
+
+  const bridge = newBridge();
+  await bridge.start();
+
+  const mapping = bridge.mappings(block)[0];
+  assert.equal(mapping.source.text, "collective memory");
+  assert.equal(mapping.translation.text, "集体记忆");
+  assert.equal(mapping.type, "highlight");
+  assert.equal(mapping.color, "#ffd400");
+  bridge.dispose();
+});
+
+test("new native source highlight is synchronized from the Zotero item notification", async () => {
+  const { block, items, newBridge, notifyItem, setGlossary } = fixture();
+  await setGlossary({ tradition: "传统" });
+  const bridge = newBridge();
+  await bridge.start();
+
+  const start = block.source.indexOf("tradition");
+  items.set("NEW-HIGHLIGHT", {
+    key: "NEW-HIGHLIGHT",
+    annotationType: "highlight",
+    annotationColor: "#ff6666",
+    annotationComment: "",
+    annotationPosition: JSON.stringify({
+      pageIndex: 0,
+      rects: [[start * 5, 700, (start + 9) * 5, 710]],
+    }),
+  });
+  await notifyItem();
+
+  const mapping = bridge.mappings(block)[0];
+  assert.equal(mapping.source.text, "tradition");
+  assert.equal(mapping.translation.text, "传统");
+  assert.equal(mapping.color, "#ff6666");
   bridge.dispose();
 });

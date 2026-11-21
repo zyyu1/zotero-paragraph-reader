@@ -187,6 +187,12 @@ export class AnnotationBridge {
     private blocks: () => Block[],
     private changed: () => void,
   ) {}
+  private async reconcileTranslatedBlocks() {
+    for (const block of this.blocks()) {
+      if (this.disposed) return;
+      await this.reconcile(block);
+    }
+  }
   async start() {
     this.storeName = "annotations-" + (await digest(this.integration.identity));
     this.exact = (await readJSON<ExactMapping[]>(this.storeName)) || [];
@@ -196,13 +202,20 @@ export class AnnotationBridge {
     this.observer = Zotero.Notifier.registerObserver(
       {
         notify: async (_event: string, type: string) => {
-          if (type === "item" && !this.disposed) await this.refresh();
+          if (type !== "item" || this.disposed) return;
+          await this.refresh();
+          // Native Zotero PDF highlights do not pass through create(). Align
+          // them here instead of relying on a later UI repaint to do it.
+          await this.reconcileTranslatedBlocks();
         },
       },
       ["item"],
       "bilingual-annotations",
     );
     await this.refresh();
+    // Restore translated counterparts for highlights that existed before the
+    // reflow reader was opened.
+    await this.reconcileTranslatedBlocks();
   }
   async refresh() {
     const sequence = ++this.refreshSequence;

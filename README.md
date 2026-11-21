@@ -29,6 +29,7 @@ This version uses its own add-on ID, preference namespace, and cache directory. 
 - Paragraph reflow inside Zotero with stacked or side-by-side bilingual text and adjustable font size, line spacing, and reading width.
 - Click a paragraph to translate it, click again to hide the Chinese translation, and click once more to restore it without another API request.
 - Highlights and comments linked to the source PDF, with manual phrase binding when the translation cannot be matched reliably.
+- Highlights created on foreign-language text in Zotero's native PDF reader are mirrored onto the corresponding translated text when the reflow reader is open. Existing highlights are restored when it opens.
 - Custom Chat Completions-compatible API endpoint, key, and model, with a connection test.
 
 ### Build
@@ -83,6 +84,7 @@ Zotero Reflow Translator 是一款 Zotero PDF 重排翻译插件。它通过连�
 - 高亮默认黄色，下划线默认黑色，批注默认灰色。
 - 左键点击已有标记，可直接删除或编辑批注。
 - 支持将双语标注关联至原 PDF；无法可靠匹配时可手动重新绑定词组。
+- 在 Zotero 原生 PDF 阅读器中高亮外文原文后，重排阅读器会同步高亮对应译文；打开重排阅读器时也会恢复已有高亮。
 - 删除确认支持“以后不再询问”，并可在阅读设置中恢复。
 
 #### 插件兼容
